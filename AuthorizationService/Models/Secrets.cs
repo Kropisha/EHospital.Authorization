@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace eHospital.Authorization.Models
+﻿namespace eHospital.Authorization.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class Secrets
     {
         [Key]

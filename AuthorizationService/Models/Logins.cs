@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace eHospital.Authorization.Models
+﻿namespace eHospital.Authorization.Models
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public class Logins
     {
        // [Key]
@@ -12,7 +12,7 @@ namespace eHospital.Authorization.Models
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Login { get; set; }
 
-        //[ForeignKey("FK_UsersLogin_Roles")]
+        // [ForeignKey("FK_UsersLogin_Roles")]
         [Key]
         public int RoleId { get; set; }
     }

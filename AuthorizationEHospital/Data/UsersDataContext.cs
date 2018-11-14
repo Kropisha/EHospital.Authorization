@@ -1,19 +1,15 @@
-﻿using eHospital.Authorization.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace eHospital.Authorization
+﻿namespace eHospital.Authorization
 {
+    using System.Linq;
+    using eHospital.Authorization.Models;
+    using Microsoft.EntityFrameworkCore;
+
     public class UsersDataContext : DbContext, IDataProvider
     {
-       // IDataProvider _data;
-        public UsersDataContext(DbContextOptions<UsersDataContext> options) : base (options)
+        public UsersDataContext(DbContextOptions<UsersDataContext> options) : base(options)
         {
-           // _data = data;
         }
+
         public DbSet<UsersData> UsersData { get; set; }
 
         public DbSet<Logins> Logins { get; set; }
@@ -37,87 +33,87 @@ namespace eHospital.Authorization
                 .HasKey(c => new { c.LoginId, c.RoleId });
             modelBuilder.Entity<UsersData>()
                 .HasKey(c => new { c.UserId });
-      
             modelBuilder.Entity<Sessions>()
                 .HasKey(c => new { c.SessionId });
-            
         }
 
         public void AddRoles(Roles roles)
         {
-            Roles existed = Roles.FirstOrDefault(x => x.RoleId == roles.RoleId);
+            Roles existed = this.Roles.FirstOrDefault(x => x.RoleId == roles.RoleId);
             if (existed == null)
             {
-                Roles.Add(roles);
-                SaveChanges();
+                this.Roles.Add(roles);
+                this.SaveChanges();
             }
         }
 
         public void AddLogin(Logins login)
         {
-            Logins existed = Logins.FirstOrDefault(x => x.Login == login.Login);
+            Logins existed = this.Logins.FirstOrDefault(x => x.Login == login.Login);
             if (existed == null)
             {
-                Logins.Add(login);
-                SaveChanges();
-            }         
-        }     
+                this.Logins.Add(login);
+                this.SaveChanges();
+            }
+        }
 
         public void AddSecrets(Secrets secrets)
         {
-            Secrets existed = Secrets.FirstOrDefault(x => x.UserId == secrets.UserId);
+            Secrets existed = this.Secrets.FirstOrDefault(x => x.UserId == secrets.UserId);
             if (existed == null)
             {
-                Secrets.Add(secrets);
-                SaveChanges();
+                this.Secrets.Add(secrets);
+                this.SaveChanges();
             }
         }
 
         public void AddSession(Sessions sessions)
         {
-            Sessions existed = Sessions.FirstOrDefault(x => x.Token == sessions.Token);
+            Sessions existed = this.Sessions.FirstOrDefault(x => x.Token == sessions.Token);
             if (existed == null)
             {
-                Sessions.Add(sessions);
-                SaveChanges();
+                this.Sessions.Add(sessions);
+                this.SaveChanges();
             }
         }
 
         public void AddUserData(UsersData usersData)
         {
-            UsersData existed = UsersData.FirstOrDefault(x => x.UserId == usersData.UserId);
+            UsersData existed = this.UsersData.FirstOrDefault(x => x.UserId == usersData.UserId);
             if (existed == null)
             {
-                UsersData.Add(usersData);
-                SaveChanges();
+                this.UsersData.Add(usersData);
+                this.SaveChanges();
             }
         }
 
         public Logins ChangeRole(Roles roles)
         {
-            Logins existed = Logins.FirstOrDefault(x => x.RoleId == roles.RoleId);
+            Logins existed = this.Logins.FirstOrDefault(x => x.RoleId == roles.RoleId);
             if (existed != null)
             {
                 existed.RoleId = roles.RoleId;
-                SaveChanges();
+                this.SaveChanges();
             }
+
             return existed;
         }
 
         public Secrets ChangePassword(Secrets secrets)
         {
-            Secrets existed = Secrets.FirstOrDefault(s => s.UserId == secrets.UserId);
+            Secrets existed = this.Secrets.FirstOrDefault(s => s.UserId == secrets.UserId);
             if (existed != null)
             {
                 existed.Password = secrets.Password;
-                SaveChanges();
+                this.SaveChanges();
             }
+
             return existed;
         }
 
         public UsersData ChangeUserData(UsersData usersData)
         {
-            UsersData existed = UsersData.FirstOrDefault(x => x.UserId == usersData.UserId);
+            UsersData existed = this.UsersData.FirstOrDefault(x => x.UserId == usersData.UserId);
             if (existed != null)
             {
                 existed.FirstName = usersData.FirstName;
@@ -130,14 +126,15 @@ namespace eHospital.Authorization
                 existed.Adress = usersData.Adress;
                 existed.Gender = usersData.Gender;
                 existed.Email = usersData.Email;
-                SaveChanges();
+                this.SaveChanges();
             }
+
             return existed;
         }
 
         public int FindByLogin(string login)
         {
-            Logins existed = Logins.FirstOrDefault(x => x.Login == login);
+            Logins existed = this.Logins.FirstOrDefault(x => x.Login == login);
             if (existed != null)
             {
                 return existed.LoginId;
@@ -150,7 +147,7 @@ namespace eHospital.Authorization
 
         public string GetRole(int userId)
         {
-            Roles existed = Roles.FirstOrDefault(r => r.RoleId == userId);
+            Roles existed = this.Roles.FirstOrDefault(r => r.RoleId == userId);
             if (existed != null)
             {
                 return existed.Title;
@@ -163,7 +160,7 @@ namespace eHospital.Authorization
 
         public int GetUserPassword(string password)
         {
-            Secrets existed = Secrets.FirstOrDefault(s => s.Password == password);
+            Secrets existed = this.Secrets.FirstOrDefault(s => s.Password == password);
             if (existed != null)
             {
                 return existed.UserId;
@@ -176,7 +173,7 @@ namespace eHospital.Authorization
 
         public bool CheckPassword(string password, int userId)
         {
-            Secrets existed = Secrets.FirstOrDefault(s => s.Password == password);
+            Secrets existed = this.Secrets.FirstOrDefault(s => s.Password == password);
             if (existed != null && existed.UserId == userId)
             {
                 return true;
@@ -189,11 +186,11 @@ namespace eHospital.Authorization
 
         public void DeleteUser(int id)
         {
-            UsersData existed = UsersData.FirstOrDefault(x => x.UserId == id);
+            UsersData existed = this.UsersData.FirstOrDefault(x => x.UserId == id);
             if (existed != null)
             {
                 existed.IsDeleted = true;
-                SaveChanges();
+                this.SaveChanges();
             }
         }
 

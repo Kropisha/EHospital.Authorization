@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace eHospital.Authorization
+﻿namespace eHospital.Authorization
 {
-    public enum usersGender
+    public enum UsersGender
     {
-        noGender,
-        man,
-        woman
+        NoGender,
+        Man,
+        Woman
     }
 }

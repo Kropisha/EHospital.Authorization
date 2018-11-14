@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace eHospital.Authorization.Service
+﻿namespace eHospital.Authorization.Service
 {
+    using Microsoft.AspNetCore.Mvc;
+
     public static class UrlHelperExtensions
     {
         public static string GetLocalUrl(this IUrlHelper urlHelper, string localUrl)

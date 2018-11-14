@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using eHospital.Authorization.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace eHospital.Authorization.Controllers
+﻿namespace eHospital.Authorization.Controllers
 {
+    using eHospital.Authorization.Models;
+    using Microsoft.AspNetCore.Mvc;
+
     [Route("api/[controller]")]
     public class ConfirmationController : Controller
     {
@@ -21,67 +16,68 @@ namespace eHospital.Authorization.Controllers
         [HttpPut("role")]
         public ActionResult<Roles> ChangeRole([FromBody]Roles roles)
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return this.BadRequest(this.ModelState);
             }
+
             if (_appDbContext.ChangeRole(roles) != null)
             {
-                return BadRequest(Errors.AddErrorToModelState("roles_failure", "Invalid role.", ModelState));
+                return this.BadRequest(Errors.AddErrorToModelState("roles_failure", "Invalid role.", this.ModelState));
             }
             else
             {
                 _appDbContext.ChangeRole(roles);
-                return Ok();
+                return this.Ok();
             }
         }
-
 
         [HttpPut("user")]
         public ActionResult<UsersData> ChangeUserData([FromBody]UsersData usersData)
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return this.BadRequest(this.ModelState);
             }
             if (_appDbContext.ChangeUserData(usersData) != null)
             {
-                return BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
+                return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
             }
             else
             {
-                return Ok(_appDbContext.ChangeUserData(usersData));
+                return this.Ok(_appDbContext.ChangeUserData(usersData));
             }
         }
 
         [HttpPut("password")]
         public ActionResult<Secrets> ChangePassword([FromBody]Secrets secrets)
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return this.BadRequest(this.ModelState);
             }
+
             if (_appDbContext.ChangePassword(secrets) == null)
             {
-                return BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
+                return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
             }
             else
             {
-                return Ok(_appDbContext.ChangePassword(secrets));
+                return this.Ok(_appDbContext.ChangePassword(secrets));
             }
         }
 
         [HttpDelete]
         public IActionResult DeleteUser(UsersData user)
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return this.BadRequest(this.ModelState);
             }
             else
             {
                 _appDbContext.DeleteUser(user.UserId);
-                return Ok();
+                return this.Ok();
             }
         }
     }

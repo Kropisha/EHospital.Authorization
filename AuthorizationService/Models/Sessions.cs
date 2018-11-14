@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace eHospital.Authorization
+﻿namespace eHospital.Authorization
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class Sessions
     {
         [Key]

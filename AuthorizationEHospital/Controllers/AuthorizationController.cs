@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using eHospital.Authorization.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-
-namespace eHospital.Authorization.Controllers
+﻿namespace eHospital.Authorization.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using eHospital.Authorization.Models;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.IdentityModel.Tokens;
+    using Newtonsoft.Json;
+
     [Route("api/[controller]")]
     public class AuthorizationController : Controller
     {
@@ -21,6 +21,28 @@ namespace eHospital.Authorization.Controllers
             _appDbContext = data;
         }
 
+        // POST api/auth/login
+        [HttpPost("login")]
+        public IActionResult Post([FromBody]CredentialsViewModel credentials)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            var identity = this.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
+            if (identity.Result == null)
+            {
+                return this.BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
+            }
+            else
+            {
+                var jwt = this.GetToken(credentials.UserLogin, credentials.Password);
+
+                return new OkObjectResult(jwt.Result);
+            }
+        }
+
         private async Task<string> GetToken(string username, string password)
         {
             // var username = Request.Form["username"];
@@ -28,11 +50,11 @@ namespace eHospital.Authorization.Controllers
 
             int userId = _appDbContext.GetUserPassword(password);
 
-            var identity = GetIdentity(username, userId);
+            var identity = this.GetIdentity(username, userId);
             if (identity == null)
             {
-                Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password.");
+                this.Response.StatusCode = 400;
+                await this.Response.WriteAsync("Invalid username or password.");
             }
 
             var now = DateTime.Now;
@@ -58,32 +80,10 @@ namespace eHospital.Authorization.Controllers
                 access_token = encodedJwt,
                 username = identity.Name
             };
- 
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+
+            this.Response.ContentType = "application/json";
+            await this.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             return encodedJwt;
-        }
-
-        // POST api/auth/login
-        [HttpPost("login")]
-        public IActionResult Post([FromBody]CredentialsViewModel credentials)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var identity = GetClaimsIdentity(credentials.UserLogin, credentials.Password);
-            if (identity.Result == null)
-            {
-                return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
-            }
-            else
-            {
-                var jwt = GetToken(credentials.UserLogin, credentials.Password);
-             
-                return new OkObjectResult(jwt.Result);
-            }
         }
 
         private Task<ClaimsIdentity> GetClaimsIdentity(string userLogin, string password)
@@ -104,7 +104,7 @@ namespace eHospital.Authorization.Controllers
             // check the credentials
             if (_appDbContext.CheckPassword(password, userToVerify))
             {
-                return Task.FromResult(GetIdentity(userLogin, userToVerify));
+                return Task.FromResult(this.GetIdentity(userLogin, userToVerify));
             }
 
             // Credentials are invalid, or account doesn't exist
@@ -120,7 +120,10 @@ namespace eHospital.Authorization.Controllers
                 };
 
             ClaimsIdentity claimsIdentity =
-            new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+            new ClaimsIdentity(
+                claims,
+                "Token",
+                ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
 
             return claimsIdentity;
