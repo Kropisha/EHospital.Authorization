@@ -12,6 +12,7 @@ namespace eHospital.Authorization.Controllers
     {
         [Authorize]
         [Route("getlogin")]
+        [HttpGet]
         public IActionResult GetLogin()
         {
             return Ok($"Ваш логин: {User.Identity.Name}");
@@ -19,9 +20,16 @@ namespace eHospital.Authorization.Controllers
 
         [Authorize(Roles = "admin")]
         [Route("getrole")]
+        [HttpGet]
         public IActionResult GetRole()
         {
             return Ok("Ваша роль: администратор");
+        }
+
+        [HttpGet]
+        public string Create()
+        {
+            return "Finally work";// _roleManager.Roles.ToList());
         }
     }
 }

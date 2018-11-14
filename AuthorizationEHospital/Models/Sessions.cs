@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace eHospital.Authorization
 {
     public class Sessions
     {
         [Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int SessionId { get; set; }
 
-        [Key]
+      //  [ForeignKey("UsersData")]
         public int UserId { get; set; }
 
         public string Token { get; set; }

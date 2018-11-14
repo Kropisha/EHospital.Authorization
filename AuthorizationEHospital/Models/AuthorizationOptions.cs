@@ -9,10 +9,10 @@ namespace eHospital.Authorization.Models
 {
     public class AuthorizationOptions
     {
-        public const string ISSUER = "MyAuthServer"; // издатель токена
-        public const string AUDIENCE = "http://localhost:44386/"; // потребитель токена
-        const string KEY = "bhiyrbgi893nofn;ixmbh47yhfbuj.cf98u4hb";   // ключ для шифрации
-        public const int LIFETIME = 1; // время жизни токена - 1 минута
+        public const string ISSUER = "eHospital.AuthorizationServer"; 
+        public const string AUDIENCE = "http://localhost:44386/"; 
+        const string KEY = "bhiyrbgi893nixmbh47yhfbuj";
+        public const int LIFETIME = 30; 
 
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {

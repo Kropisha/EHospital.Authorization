@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace eHospital.Authorization.Models
 {
-    public class UsersData
+    [Table("UsersData")]
+    public class UsersData : IdentityUser
     {
         [Key]
         public int UserId { get; set; }
@@ -24,7 +25,7 @@ namespace eHospital.Authorization.Models
         public DateTime BirthDate { get; set; }
 
         [MaxLength(12)]
-        public string PhoneNumber { get; set; }
+        public override string PhoneNumber { get; set; }
 
         public string Country { get; set; }
 
@@ -35,7 +36,7 @@ namespace eHospital.Authorization.Models
         public byte Gender { get; set; }
 
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string Email { get; set; }
+        public override string Email { get; set; }
 
         public bool IsDeleted { get; set; }
     }
