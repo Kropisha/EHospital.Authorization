@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace eHospital.Authorization.Controllers
 {
     [Route("api/[controller]")]
-    public class AccountController : Controller
+    public class RegistrationController : Controller
     {
         
         private readonly IDataProvider _appDbContext;
@@ -22,7 +22,7 @@ namespace eHospital.Authorization.Controllers
         private readonly IMapper _mapper;
       //  RoleManager<Roles> _roleManager;
 
-        public AccountController( IMapper mapper, IDataProvider appDbContext)
+        public RegistrationController( IMapper mapper, IDataProvider appDbContext)
         {
           //  _userManager = userManager;
             _mapper = mapper;
@@ -58,57 +58,42 @@ namespace eHospital.Authorization.Controllers
        // [Authorize(Roles = _roleManager.Roles[])]
         // POST api/accounts
         [HttpPost]
-        public IActionResult Post([FromBody]UsersDataContext model)
+        public IActionResult Post([FromBody] UsersDataContext model)//UsersData userDatas, Logins userLogins, Secrets userSecrets, Roles roles) //UsersDataContext model
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var userIdentity = _mapper.Map<UsersData>(model);
+            var userDatas = _mapper.Map<UsersData>(model);
             var userLogins = _mapper.Map<Logins>(model);
             var userRoles = _mapper.Map<Roles>(model);
             var userSecrets = _mapper.Map<Secrets>(model);
 
+            userRoles.RoleId = (int)UsersRoles.noRole;
+            
+            _appDbContext.AddRoles(new Roles { RoleId = userRoles.RoleId, Title = UsersRoles.noRole.ToString() });
 
-          //  var result = await _userManager.CreateAsync(userIdentity, userSecrets.Password); //Password
+            _appDbContext.AddLogin(new Logins { Login = userLogins.Login, RoleId = userLogins.RoleId });
 
-          //  if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
-
-             _appDbContext.AddRoles(new Roles { RoleId = (int)UsersRoles.noRole, Title = UsersRoles.noRole.ToString() });
-             _appDbContext.AddLogin(new Logins { LoginId = userLogins.LoginId, Login = userLogins.Login, RoleId = userLogins.RoleId });
-             _appDbContext.AddSecrets(new Secrets { UserId = userSecrets.UserId, Password = userSecrets.Password });
-             _appDbContext.AddUserData(new UsersData { UserId = userIdentity.UserId, FirstName = userIdentity.FirstName,
-                LastName = userIdentity.LastName, BirthDate = userIdentity.BirthDate, PhoneNumber = userIdentity.PhoneNumber,
-                Country = userIdentity.Country, City = userIdentity.City, Address = userIdentity.Address, Gender = userIdentity.Gender,
-                Email = userIdentity.Email });
+            _appDbContext.AddUserData(new UsersData
+            {
+                FirstName = userDatas.FirstName,
+                LastName = userDatas.LastName,
+                BirthDate = userDatas.BirthDate,
+                PhoneNumber = userDatas.PhoneNumber,
+                Country = userDatas.Country,
+                City = userDatas.City,
+                Adress = userDatas.Adress,
+                Gender = userDatas.Gender,
+                Email = userDatas.Email
+            });
+            
+            _appDbContext.AddSecrets(new Secrets { UserId = userSecrets.UserId, Password = userSecrets.Password });
+             
              _appDbContext.Save(); //await
 
             return new OkObjectResult("Account created");
         }
-
-        
-        //public List<UsersData> Users()
-        //{
-        //    List<UsersData> users = new List<UsersData>();
-        //    foreach (var login in _appDbContext.Logins)
-        //    {
-        //        foreach (var user in _appDbContext.UsersData)
-        //        {
-        //            if (login.Login == user.Email)
-        //            {
-        //                user.Id = login.Login;
-        //                users.Add(user);
-        //            }
-        //        }
-
-        //    }
-        //    return users;
-        //}
-
-        //public List<UsersData> Create()
-        //{
-        //    return Users();// _roleManager.Roles.ToList());
-        //}
     }
 }

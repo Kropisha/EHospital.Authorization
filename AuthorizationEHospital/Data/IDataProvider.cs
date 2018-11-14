@@ -18,7 +18,7 @@ namespace eHospital.Authorization
         void AddUserData(UsersData usersData);
 
         //TODO: add filter [only for admin]
-        Roles ChangeRole(Roles roles);
+        Logins ChangeRole(Roles roles);
         UsersData ChangeUserData(UsersData usersData);
         Secrets ChangePassword(Secrets secrets);
 

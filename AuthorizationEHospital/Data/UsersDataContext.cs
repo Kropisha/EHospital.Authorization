@@ -31,22 +31,16 @@ namespace eHospital.Authorization
             modelBuilder.Entity<Roles>().ToTable("Roles");
             modelBuilder.Entity<Secrets>().ToTable("Secrets");
             modelBuilder.Entity<Sessions>().ToTable("Sessions");
+            modelBuilder.Entity<Roles>()
+               .HasKey(c => new { c.RoleId });
             modelBuilder.Entity<Logins>()
-                .HasKey(c => new { c.LoginId});
+                .HasKey(c => new { c.LoginId, c.RoleId });
+            modelBuilder.Entity<UsersData>()
+                .HasKey(c => new { c.UserId });
+      
             modelBuilder.Entity<Sessions>()
                 .HasKey(c => new { c.SessionId });
-            modelBuilder.Entity<Roles>()
-                .HasKey(c => new { c.RoleId });
-        }
-
-        public void AddLogin(Logins login)
-        {
-            Logins existed = Logins.FirstOrDefault(x => x.LoginId == login.LoginId);
-            if (existed == null)
-            {
-                Logins.Add(login);
-                SaveChanges();
-            }         
+            
         }
 
         public void AddRoles(Roles roles)
@@ -58,6 +52,16 @@ namespace eHospital.Authorization
                 SaveChanges();
             }
         }
+
+        public void AddLogin(Logins login)
+        {
+            Logins existed = Logins.FirstOrDefault(x => x.Login == login.Login);
+            if (existed == null)
+            {
+                Logins.Add(login);
+                SaveChanges();
+            }         
+        }     
 
         public void AddSecrets(Secrets secrets)
         {
@@ -74,8 +78,6 @@ namespace eHospital.Authorization
             Sessions existed = Sessions.FirstOrDefault(x => x.Token == sessions.Token);
             if (existed == null)
             {
-                //var current = Sessions.LastOrDefault(s => s.SessionId != sessions.SessionId);
-                //sessions.SessionId = current.SessionId + 1;
                 Sessions.Add(sessions);
                 SaveChanges();
             }
@@ -91,13 +93,12 @@ namespace eHospital.Authorization
             }
         }
 
-        public Roles ChangeRole(Roles roles)
+        public Logins ChangeRole(Roles roles)
         {
-            Roles existed = Roles.FirstOrDefault(x => x.RoleId == roles.RoleId);
+            Logins existed = Logins.FirstOrDefault(x => x.RoleId == roles.RoleId);
             if (existed != null)
             {
                 existed.RoleId = roles.RoleId;
-                existed.Title = roles.Title;
                 SaveChanges();
             }
             return existed;
@@ -126,7 +127,7 @@ namespace eHospital.Authorization
                 existed.PhoneNumber = usersData.PhoneNumber;
                 existed.Country = usersData.Country;
                 existed.City = usersData.City;
-                existed.Address = usersData.Address;
+                existed.Adress = usersData.Adress;
                 existed.Gender = usersData.Gender;
                 existed.Email = usersData.Email;
                 SaveChanges();
@@ -186,7 +187,6 @@ namespace eHospital.Authorization
             }
         }
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public void DeleteUser(int id)
         {
             UsersData existed = UsersData.FirstOrDefault(x => x.UserId == id);
