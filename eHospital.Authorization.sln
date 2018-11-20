@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eHospital.Authorization", "AuthorizationEHospital\eHospital.Authorization.csproj", "{BA538126-D53A-4A13-A430-B52927E1FB2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.WebAPI", "EHospital.Authorization\EHospital.Authorization.WebAPI.csproj", "{C99D0D27-4387-4039-A1F9-77AFB7318B16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationService", "AuthorizationService\AuthorizationService.csproj", "{D7D6C83F-BF55-4169-B3A8-33ADD43CE0B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.Model", "EHospital.Authorization.Model\EHospital.Authorization.Model.csproj", "{65681762-BD27-4E23-8DA9-2B893D24F30A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.Data", "EHospital.Authorization.Data\EHospital.Authorization.Data.csproj", "{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.BusinessLogic", "EHospital.Authorization.BusinessLogic\EHospital.Authorization.BusinessLogic.csproj", "{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +17,27 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA538126-D53A-4A13-A430-B52927E1FB2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA538126-D53A-4A13-A430-B52927E1FB2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA538126-D53A-4A13-A430-B52927E1FB2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA538126-D53A-4A13-A430-B52927E1FB2A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7D6C83F-BF55-4169-B3A8-33ADD43CE0B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7D6C83F-BF55-4169-B3A8-33ADD43CE0B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7D6C83F-BF55-4169-B3A8-33ADD43CE0B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7D6C83F-BF55-4169-B3A8-33ADD43CE0B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C99D0D27-4387-4039-A1F9-77AFB7318B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C99D0D27-4387-4039-A1F9-77AFB7318B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C99D0D27-4387-4039-A1F9-77AFB7318B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C99D0D27-4387-4039-A1F9-77AFB7318B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65681762-BD27-4E23-8DA9-2B893D24F30A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65681762-BD27-4E23-8DA9-2B893D24F30A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65681762-BD27-4E23-8DA9-2B893D24F30A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65681762-BD27-4E23-8DA9-2B893D24F30A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {EA86ECB3-05A2-434F-A978-A854C6D25EBA}
+		SolutionGuid = {80BBC17A-A3E7-452C-912B-B0A5C0ACE913}
 	EndGlobalSection
 EndGlobal
