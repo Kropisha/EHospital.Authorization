@@ -1,29 +1,30 @@
 ﻿namespace EHospital.Authorization
 {
     using EHospital.Authorization.Model;
+    using System.Threading.Tasks;
 
     public interface IDataProvider
     {
-        void AddLogin(Logins login);
+        Task AddLogin(Logins login);
 
-        void AddRoles(Roles roles);
+        Task AddRoles(Roles roles);
 
-        void AddSecrets(Secrets secrets);
+        Task AddSecrets(Secrets secrets);
 
-        void AddSession(Sessions sessions);
+        Task AddSession(Sessions sessions);
 
-        void AddUserData(UsersData usersData);
+        Task AddUserData(UsersData usersData);
 
         // TODO: add filter [only for admin]
-        Logins ChangeRole(Roles roles);
+        Task<Logins> ChangeRole(Roles roles);
 
-        UsersData ChangeUserData(UsersData usersData);
+        Task<UsersData> ChangeUserData(UsersData usersData);
 
-        Secrets ChangePassword(Secrets secrets);
+        Task<Secrets> ChangePassword(Secrets secrets);
 
         int FindByLogin(string login);
 
-        void DeleteUser(int id);
+        Task DeleteUser(int id);
 
         bool CheckPassword(string password, int userId);
 
@@ -31,6 +32,6 @@
 
         int GetUserPassword(string password);
 
-        void Save();
+        Task Save();
     }
 }

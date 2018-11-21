@@ -1,4 +1,4 @@
-﻿namespace EHospital.Authorization.WebApi
+﻿namespace EHospital.Authorization.BusinessLogic
 {
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;

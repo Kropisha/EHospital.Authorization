@@ -14,6 +14,5 @@
 
         [DataType(DataType.DateTime)]
         public DateTime ExpiredDate { get; set; }
-
     }
 }

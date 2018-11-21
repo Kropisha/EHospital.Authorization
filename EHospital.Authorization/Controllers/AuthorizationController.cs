@@ -5,7 +5,8 @@
     using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using EHospital.Authorization.Models;
+    using EHospital.Authorization.BusinessLogic;
+    using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,9 @@
     [Route("api/[controller]")]
     public class AuthorizationController : Controller
     {
+        private static readonly log4net.ILog Log = log4net.LogManager
+                                                          .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IDataProvider _appDbContext;
 
         public AuthorizationController(IDataProvider data)
@@ -25,20 +29,26 @@
         [HttpPost("login")]
         public IActionResult Post([FromBody]CredentialsViewModel credentials)
         {
+            Log.Info("Set credentials for authorization.");
             if (!this.ModelState.IsValid)
             {
+                Log.Error("Incorrect format of input.");
                 return this.BadRequest(this.ModelState);
             }
 
+            Log.Info("Check the user.");
             var identity = this.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
             if (identity.Result == null)
             {
+                Log.Error("Invalid username or password.");
                 return this.BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", this.ModelState));
             }
             else
             {
+                Log.Info("Set an access token.");
                 var jwt = this.GetToken(credentials.UserLogin, credentials.Password);
 
+                Log.Info("Successful authorize.");
                 return new OkObjectResult(jwt.Result);
             }
         }
@@ -57,6 +67,7 @@
                 await this.Response.WriteAsync("Invalid username or password.");
             }
 
+            Log.Info("Set token options.");
             var now = DateTime.Now;
 
             var jwt = new JwtSecurityToken(
@@ -67,6 +78,7 @@
                     expires: now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME)),
                     signingCredentials: new SigningCredentials(AuthorizationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            Log.Info("Set session options.");
             Sessions start = new Sessions()
             {
                 Token = encodedJwt,
@@ -74,13 +86,16 @@
                 ExpiredDate = now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME))
             };
 
-            _appDbContext.AddSession(start);
+            Log.Info("Add session");
+            await _appDbContext.AddSession(start);
+            Log.Info("Session was add.");
             var response = new
             {
                 access_token = encodedJwt,
                 username = identity.Name
             };
 
+            Log.Info("Return session's token");
             this.Response.ContentType = "application/json";
             await this.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             return encodedJwt;
@@ -93,7 +108,7 @@
                 return Task.FromResult<ClaimsIdentity>(null);
             }
 
-            // get the user to verifty
+            Log.Info("Get the user to verifty.");
             var userToVerify = _appDbContext.FindByLogin(userLogin);
 
             if (userToVerify == 0)
@@ -101,13 +116,13 @@
                 return Task.FromResult<ClaimsIdentity>(null);
             }
 
-            // check the credentials
+            Log.Info("Check the credentials.");
             if (_appDbContext.CheckPassword(password, userToVerify))
             {
                 return Task.FromResult(this.GetIdentity(userLogin, userToVerify));
             }
 
-            // Credentials are invalid, or account doesn't exist
+            Log.Error("Credentials are invalid, or account doesn't exist.");
             return Task.FromResult<ClaimsIdentity>(null);
         }
 
