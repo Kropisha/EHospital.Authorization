@@ -1,8 +1,8 @@
 ﻿namespace EHospital.Authorization.WebApi
 {
+    using System.Threading.Tasks;
     using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Mvc;
-    using System.Threading.Tasks;
 
     [Route("api/[controller]")]
     public class ConfirmationController : Controller
@@ -17,6 +17,7 @@
             _appDbContext = data;
         }
 
+        // TODO: change logic of method
         [HttpPut("role")]
         public ActionResult<Roles> ChangeRole([FromBody]Roles roles)
         {
@@ -96,7 +97,7 @@
             else
             {
                 Log.Info("Deleting user.");
-                await _appDbContext.DeleteUser(user.UserId);
+                await _appDbContext.DeleteUser(user.Id);
                 Log.Info("Success.");
                 return this.Ok();
             }

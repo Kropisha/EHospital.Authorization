@@ -5,7 +5,7 @@
     public class Roles
     {
         [Key]
-        public int RoleId { get; set; }
+        public int Id { get; set; }
 
         public string Title { get; set; }
     }

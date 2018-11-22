@@ -2,7 +2,6 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
-    using EHospital.Authorization.Data;
     using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +12,11 @@
                                                           .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IDataProvider _appDbContext;
-        private readonly IMapper _mapper;
+       // private readonly IMapper _mapper;
 
-        public RegistrationController( IMapper mapper, IDataProvider appDbContext)
+        public RegistrationController(IDataProvider appDbContext)
         {
-            _mapper = mapper;
+           // _mapper = mapper;
             _appDbContext = appDbContext;
         }
 
@@ -51,7 +50,7 @@
        // [Authorize(Roles = _roleManager.Roles[])]
         // POST api/accounts
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UsersDataContext model) // UsersData userDatas, Logins userLogins, Secrets userSecrets, Roles roles) 
+        public async Task<IActionResult> Post([FromBody] UsersData userDatas, Secrets userSecrets)
         {
             Log.Info("Get datas for registration.");
             if (!this.ModelState.IsValid)
@@ -60,19 +59,16 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            var userDatas = _mapper.Map<UsersData>(model);
-            var userLogins = _mapper.Map<Logins>(model);
-            var userRoles = _mapper.Map<Roles>(model);
-            var userSecrets = _mapper.Map<Secrets>(model);
+            //var userDatas = _mapper.Map<UsersData>(model);
+            //var userLogins = _mapper.Map<Logins>(model);
+            //var userRoles = _mapper.Map<Roles>(model);
+            //var userSecrets = _mapper.Map<Secrets>(model);
 
-            Log.Info("Set default users role.");
-            userRoles.RoleId = (int)UsersRoles.NoRole;
-
-            Log.Info("Add role.");
-            await _appDbContext.AddRoles(new Roles { RoleId = userRoles.RoleId, Title = UsersRoles.NoRole.ToString() });
+            Log.Info("Add default role.");
+            await _appDbContext.AddRoles(new Roles { Id = (int)UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString() });
 
             Log.Info("Add login.");
-            await _appDbContext.AddLogin(new Logins { Login = userLogins.Login, RoleId = userLogins.RoleId });
+            await _appDbContext.AddLogin(new Logins { Id = 0, Login = userDatas.Email });
 
             Log.Info("Add user's data");
             await _appDbContext.AddUserData(new UsersData
@@ -89,7 +85,7 @@
             });
 
             Log.Info("Add password.");
-            await _appDbContext.AddSecrets(new Secrets { UserId = userSecrets.UserId, Password = userSecrets.Password });
+            await _appDbContext.AddSecrets(new Secrets {Password = userSecrets.Password });
 
             Log.Info("Save changes.");
             await _appDbContext.Save();

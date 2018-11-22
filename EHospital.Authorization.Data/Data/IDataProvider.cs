@@ -1,7 +1,7 @@
 ﻿namespace EHospital.Authorization
 {
-    using EHospital.Authorization.Model;
     using System.Threading.Tasks;
+    using EHospital.Authorization.Model;
 
     public interface IDataProvider
     {
