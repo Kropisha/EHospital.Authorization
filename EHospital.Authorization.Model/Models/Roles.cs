@@ -7,6 +7,7 @@
         [Key]
         public int Id { get; set; }
 
+        [StringLength(10, ErrorMessage = "No more than 10 symbols")]
         public string Title { get; set; }
     }
 }
