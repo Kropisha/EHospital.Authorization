@@ -114,6 +114,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EHospital.Authorization.BusinessLogic\EHospital.Authorization.BusinessLogic.csproj">
+      <Project>{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}</Project>
+      <Name>EHospital.Authorization.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHospital.Authorization.Model\EHospital.Authorization.Model.csproj">
       <Project>{65681762-bd27-4e23-8da9-2b893d24f30a}</Project>
       <Name>EHospital.Authorization.Model</Name>

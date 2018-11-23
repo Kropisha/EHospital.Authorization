@@ -1,4 +1,4 @@
-﻿namespace EHospital.Authorization.WebApi
+﻿namespace EHospital.Authorization.WebAPI
 {
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc.ModelBinding;

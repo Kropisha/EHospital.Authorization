@@ -26,11 +26,13 @@
 
         Task DeleteUser(int id);
 
+        bool IsUserExist(string email);
+
         bool CheckPassword(string password, int userId);
 
         string GetRole(int userId);
 
-        int GetUserPassword(string password);
+        int GetUserId(string login);
 
         Task Save();
     }

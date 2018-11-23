@@ -3,6 +3,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using EHospital.Authorization.Model;
+    using EHospital.Authorization.WebAPI;
     using Microsoft.EntityFrameworkCore;
 
     public class UsersDataContext : DbContext, IDataProvider
@@ -21,8 +22,6 @@
 
         public async Task AddRoles(Roles roles)
         {
-           // Logins existed = this.Logins.FirstOrDefault(x => x.RoleId == roles.Id);
-           // if (existed == null)
             {
                 this.Roles.Add(roles);
                await this.SaveChangesAsync();
@@ -48,6 +47,7 @@
             {
                 var login = this.Logins.LastOrDefault(x => x.Id > 0);
                 secrets.Id = login.Id;
+                secrets.Password = SafePassword.HashPassword(secrets.Password);
                 this.Secrets.Add(secrets);
                 await this.SaveChangesAsync();
             }
@@ -80,7 +80,8 @@
             Logins existed = this.Logins.FirstOrDefault(x => x.RoleId == roles.Id);
             if (existed != null)
             {
-                existed.RoleId = roles.Id;
+                var current = this.Roles.FirstOrDefault(x => x.Id == existed.RoleId);
+                current.Title = roles.Title;
                 await this.SaveChangesAsync();
             }
 
@@ -92,7 +93,7 @@
             Secrets existed = this.Secrets.FirstOrDefault(s => s.Id == secrets.Id);
             if (existed != null)
             {
-                existed.Password = secrets.Password;
+                existed.Password = SafePassword.HashPassword(secrets.Password);
                 await this.SaveChangesAsync();
             }
 
@@ -146,9 +147,9 @@
             }
         }
 
-        public int GetUserPassword(string password)
+        public int GetUserId(string login)
         {
-            Secrets existed = this.Secrets.FirstOrDefault(s => s.Password == password);
+            Logins existed = this.Logins.FirstOrDefault(l => l.Login == login);
             if (existed != null)
             {
                 return existed.Id;
@@ -159,12 +160,32 @@
             }
         }
 
-        public bool CheckPassword(string password, int userId)
+        public bool IsUserExist(string email)
         {
-            Secrets existed = this.Secrets.FirstOrDefault(s => s.Password == password);
-            if (existed != null && existed.Id == userId)
+            Logins existed = this.Logins.FirstOrDefault(e => e.Login == email);
+            if (existed == null)
+            {
+                return false;
+            }
+            else
             {
                 return true;
+            }
+        }
+
+        public bool CheckPassword(string password, int userId)
+        {
+            Secrets existed = this.Secrets.FirstOrDefault(s => s.Id == userId);
+            if (existed != null)
+            {
+                if (SafePassword.VerifyHashedPassword(existed.Password, password))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

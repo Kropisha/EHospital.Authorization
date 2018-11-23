@@ -1,4 +1,4 @@
-﻿namespace EHospital.Authorization.WebApi
+﻿namespace EHospital.Authorization.WebAPI
 {
     using System.Threading.Tasks;
     using EHospital.Authorization.Model;
@@ -17,7 +17,6 @@
             _appDbContext = data;
         }
 
-        // TODO: change logic of method
         [HttpPut("role")]
         public ActionResult<Roles> ChangeRole([FromBody]Roles roles)
         {
@@ -85,8 +84,9 @@
             }
         }
 
+        // TODO: change logic of method
         [HttpDelete]
-        public async Task<IActionResult> DeleteUser(UsersData user)
+        public async Task<IActionResult> DeleteUser(int userId)
         {
             Log.Info("Get user for delete.");
             if (!this.ModelState.IsValid)
@@ -97,7 +97,7 @@
             else
             {
                 Log.Info("Deleting user.");
-                await _appDbContext.DeleteUser(user.Id);
+                await _appDbContext.DeleteUser(userId);
                 Log.Info("Success.");
                 return this.Ok();
             }

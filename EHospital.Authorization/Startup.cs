@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using EHospital.Authorization.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using EHospital.Authorization.WebApi;
-using EHospital.Authorization.BusinessLogic;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-
-namespace EHospital.Authorization
+﻿namespace EHospital.Authorization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using EHospital.Authorization.BusinessLogic;
+    using EHospital.Authorization.Data;
+    using EHospital.Authorization.WebAPI;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.IdentityModel.Tokens;
+
     public class Startup
     {
         private static readonly log4net.ILog log = log4net.LogManager

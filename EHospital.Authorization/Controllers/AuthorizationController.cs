@@ -1,4 +1,4 @@
-﻿namespace EHospital.Authorization.WebApi
+﻿namespace EHospital.Authorization.WebAPI
 {
     using System;
     using System.Collections.Generic;
@@ -58,7 +58,7 @@
             // var username = Request.Form["username"];
             // var password = Request.Form["password"];
 
-            int userId = _appDbContext.GetUserPassword(password);
+            int userId = _appDbContext.GetUserId(username);
 
             var identity = this.GetIdentity(username, userId);
             if (identity == null)

@@ -314,7 +314,9 @@
   <ItemGroup>
     <Compile Include="Credentials\CredentialsViewModel.cs" />
     <Compile Include="Credentials\CredentialsViewModelValidator.cs" />
+    <Compile Include="Credentials\SafePassword.cs" />
     <Compile Include="EmailAction\EmailSender.cs" />
+    <Compile Include="EmailAction\EmailSenderExtensions.cs" />
     <Compile Include="EmailAction\IEmailSender.cs" />
     <Compile Include="Enums\enumUsersGender.cs" />
     <Compile Include="Enums\enumUsersRoles.cs" />
