@@ -1,5 +1,6 @@
 ﻿namespace EHospital.Authorization.Data
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using EHospital.Authorization.Model;
@@ -19,6 +20,8 @@
         public DbSet<Secrets> Secrets { get; set; }
 
         public DbSet<Sessions> Sessions { get; set; }
+
+        public string Token { get; set; }
 
         public async Task AddRoles(Roles roles)
         {
@@ -134,6 +137,16 @@
             }
         }
 
+        public async Task LogOut(int userId)
+        {
+            Sessions existed = this.Sessions.LastOrDefault(x => x.UserId == userId);
+            if (existed != null)
+            {
+                existed.ExpiredDate = DateTime.Now;
+                await this.SaveChangesAsync();
+            }
+        }
+
         public string GetRole(int userId)
         {
             Roles existed = this.Roles.FirstOrDefault(r => r.Id == userId);
@@ -144,6 +157,27 @@
             else
             {
                 return "noRole";
+            }
+        }
+
+        public string GetRoleByToken(string token)
+        {
+            Sessions existed = this.Sessions.LastOrDefault(s => s.Token == token);
+            if ((existed.ExpiredDate.Hour + existed.ExpiredDate.Minute) < (DateTime.Now.Hour + DateTime.Now.Minute))
+            {
+                if (existed != null)
+                {
+                    var current = this.Roles.FirstOrDefault(r => r.Id == existed.UserId);
+                    return current.Title;
+                }
+                else
+                {
+                    return "sessionIsEnd";
+                }
+            }
+            else
+            {
+                return "sessionIsEnd";
             }
         }
 
@@ -173,6 +207,19 @@
             }
         }
 
+        public bool IsExistPreviousSession(int userId)
+        {
+            Sessions existed = this.Sessions.FirstOrDefault(x => x.UserId == userId);
+            if (existed != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool CheckPassword(string password, int userId)
         {
             Secrets existed = this.Secrets.FirstOrDefault(s => s.Id == userId);
@@ -199,6 +246,16 @@
             if (existed != null)
             {
                 existed.IsDeleted = true;
+                await this.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteSessions(int userId)
+        {
+            Sessions existed = this.Sessions.FirstOrDefault(x => x.UserId == userId);
+            if (existed != null)
+            {
+                this.Sessions.Remove(existed);
                 await this.SaveChangesAsync();
             }
         }

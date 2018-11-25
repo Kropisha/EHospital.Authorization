@@ -84,7 +84,6 @@
             }
         }
 
-        // TODO: change logic of method
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(int userId)
         {

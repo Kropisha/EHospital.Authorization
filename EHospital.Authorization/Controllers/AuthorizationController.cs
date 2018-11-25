@@ -47,10 +47,17 @@
             {
                 Log.Info("Set an access token.");
                 var jwt = this.GetToken(credentials.UserLogin, credentials.Password);
-
+                _appDbContext.Token = jwt.Result;
                 Log.Info("Successful authorize.");
                 return new OkObjectResult(jwt.Result);
             }
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Post(int userId)
+        {
+            _appDbContext.LogOut(userId);
+            return new OkObjectResult("Log out succes.");
         }
 
         private async Task<string> GetToken(string username, string password)
@@ -85,6 +92,14 @@
                 UserId = userId,
                 ExpiredDate = now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME))
             };
+
+            Log.Info("Check for previous session.");
+            if (_appDbContext.IsExistPreviousSession(userId))
+            {
+                Log.Info("The session was founded. I`ll delete it.");
+                await _appDbContext.DeleteSessions(userId);
+                Log.Info("Successfull delete.");
+            }
 
             Log.Info("Add session");
             await _appDbContext.AddSession(start);
