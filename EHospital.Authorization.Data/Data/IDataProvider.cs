@@ -26,23 +26,21 @@
 
         Task LogOut(int userId);
 
-        int FindByLogin(string login);
+        Task<int> FindByLogin(string login);
 
         Task DeleteUser(int id);
 
         Task DeleteSessions(int userId);
 
-        bool IsUserExist(string email);
+        Task<bool> IsUserExist(string email);
 
-        bool IsExistPreviousSession(int userId);
+        Task<bool> IsExistPreviousSession(int userId);
 
-        bool CheckPassword(string password, int userId);
+        Task<bool> CheckPassword(string password, int userId);
 
-        string GetRole(int userId);
+        Task<string> GetRole(int userId);
 
-        string GetRoleByToken(string token);
-
-        int GetUserId(string login);
+        Task<string> GetRoleByToken(string token);
 
         Task Save();
     }

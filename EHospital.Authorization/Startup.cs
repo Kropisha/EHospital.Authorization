@@ -1,17 +1,11 @@
 ﻿namespace EHospital.Authorization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
     using EHospital.Authorization.BusinessLogic;
     using EHospital.Authorization.Data;
     using EHospital.Authorization.WebAPI;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +15,8 @@
     {
         private static readonly log4net.ILog log = log4net.LogManager
                                                           .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private const string CONNECTION_STRING_NAME = "EHospitalDB";
 
         public Startup(IConfiguration configuration)
         {
@@ -33,14 +29,10 @@
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = "Data Source=JULIKROP;Initial Catalog=Schema;Integrated Security=True"; //Configuration.GetConnectionString("DefaultConnection");
+            string connection = this.Configuration.GetConnectionString(CONNECTION_STRING_NAME);
 
             services.AddDbContext<UsersDataContext>(options =>
                 options.UseSqlServer(connection));
-
-            //services.AddIdentity<UsersData,Roles>()
-            //.AddUserStore<UsersDataContext>();
-           // services.AddAutoMapper();
 
             services.AddScoped<IDataProvider, UsersDataContext>();
             services.AddScoped(typeof(UsersDataContext));
@@ -51,21 +43,12 @@
                        options.RequireHttpsMetadata = false;
                        options.TokenValidationParameters = new TokenValidationParameters
                        {
-                           // укзывает, будет ли валидироваться издатель при валидации токена
                            ValidateIssuer = true,
-                           // строка, представляющая издателя
                            ValidIssuer = AuthorizationOptions.ISSUER,
-
-                           // будет ли валидироваться потребитель токена
                            ValidateAudience = true,
-                           // установка потребителя токена
                            ValidAudience = AuthorizationOptions.AUDIENCE,
-                           // будет ли валидироваться время существования
                            ValidateLifetime = true,
-
-                           // установка ключа безопасности
                            IssuerSigningKey = AuthorizationOptions.GetSymmetricSecurityKey(),
-                           // валидация ключа безопасности
                            ValidateIssuerSigningKey = true,
                        };
                    });

@@ -4,7 +4,7 @@
     using System.Security.Cryptography;
     using System.Text.RegularExpressions;
 
-    public class SafePassword
+    public class PasswordManager
     {
         private const int SaltByteSize = 24;
         private const int HashByteSize = 24;

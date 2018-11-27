@@ -1,4 +1,6 @@
-﻿namespace EHospital.Authorization.Library
+﻿using System.Threading.Tasks;
+
+namespace EHospital.Authorization.Library
 {
     public class Authorization
     {
@@ -8,7 +10,8 @@
         {
             dataProvider = data;
         }
-        public string GetRoleByToken(string token)
+
+        public Task<string> GetRoleByToken(string token)
         {
            return this.dataProvider.GetRoleByToken(token);
         }

@@ -7,9 +7,9 @@
     {
         public static ModelStateDictionary AddErrorsToModelState(IdentityResult identityResult, ModelStateDictionary modelState)
         {
-            foreach (var e in identityResult.Errors)
+            foreach (var error in identityResult.Errors)
             {
-                modelState.TryAddModelError(e.Code, e.Description);
+                modelState.TryAddModelError(error.Code, error.Description);
             }
 
             return modelState;

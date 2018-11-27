@@ -58,12 +58,12 @@
             }
 
             Log.Info("Chek is password safe.");
-            if (SafePassword.ValidatePassword(userSecrets.Password))
+            if (PasswordManager.ValidatePassword(userSecrets.Password))
             {
                 Log.Info("Safety of password is good.");
 
                 Log.Info("Chek is it a new user.");
-                if (!_appDbContext.IsUserExist(userDatas.Email))
+                if (! await _appDbContext.IsUserExist(userDatas.Email))
                 {
                     Log.Info("Add default role.");
                     await _appDbContext.AddRoles(new Roles { Id = (int)UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString() });

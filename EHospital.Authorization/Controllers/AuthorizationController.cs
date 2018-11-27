@@ -27,7 +27,7 @@
 
         // POST api/auth/login
         [HttpPost("login")]
-        public IActionResult Post([FromBody]CredentialsViewModel credentials)
+        public IActionResult LogIn([FromBody]CredentialsViewModel credentials)
         {
             Log.Info("Set credentials for authorization.");
             if (!this.ModelState.IsValid)
@@ -54,7 +54,7 @@
         }
 
         [HttpPost("logout")]
-        public IActionResult Post(int userId)
+        public IActionResult LogOut(int userId)
         {
             _appDbContext.LogOut(userId);
             return new OkObjectResult("Log out succes.");
@@ -65,9 +65,9 @@
             // var username = Request.Form["username"];
             // var password = Request.Form["password"];
 
-            int userId = _appDbContext.GetUserId(username);
+            int userId = await _appDbContext.FindByLogin(username);
 
-            var identity = this.GetIdentity(username, userId);
+            var identity = await this.GetIdentity(username, userId);
             if (identity == null)
             {
                 this.Response.StatusCode = 400;
@@ -94,7 +94,7 @@
             };
 
             Log.Info("Check for previous session.");
-            if (_appDbContext.IsExistPreviousSession(userId))
+            if (await _appDbContext.IsExistPreviousSession(userId))
             {
                 Log.Info("The session was founded. I`ll delete it.");
                 await _appDbContext.DeleteSessions(userId);
@@ -116,37 +116,37 @@
             return encodedJwt;
         }
 
-        private Task<ClaimsIdentity> GetClaimsIdentity(string userLogin, string password)
+        private async Task<ClaimsIdentity> GetClaimsIdentity(string userLogin, string password)
         {
             if (string.IsNullOrEmpty(userLogin) || string.IsNullOrEmpty(password))
             {
-                return Task.FromResult<ClaimsIdentity>(null);
+                return null;
             }
 
             Log.Info("Get the user to verifty.");
-            var userToVerify = _appDbContext.FindByLogin(userLogin);
+            var userToVerify = await _appDbContext.FindByLogin(userLogin);
 
             if (userToVerify == 0)
             {
-                return Task.FromResult<ClaimsIdentity>(null);
+                return null;
             }
 
             Log.Info("Check the credentials.");
-            if (_appDbContext.CheckPassword(password, userToVerify))
+            if (await _appDbContext.CheckPassword(password, userToVerify))
             {
-                return Task.FromResult(this.GetIdentity(userLogin, userToVerify));
+                return await this.GetIdentity(userLogin, userToVerify);
             }
 
             Log.Error("Credentials are invalid, or account doesn't exist.");
-            return Task.FromResult<ClaimsIdentity>(null);
+            return null;
         }
 
-        private ClaimsIdentity GetIdentity(string userLogin, int userToVerify)
+        private async Task<ClaimsIdentity> GetIdentity(string userLogin, int userToVerify)
         {
             var claims = new List<Claim>
                 {
                    new Claim(ClaimsIdentity.DefaultNameClaimType, userLogin),
-                   new Claim(ClaimsIdentity.DefaultRoleClaimType, _appDbContext.GetRole(userToVerify))
+                   new Claim(ClaimsIdentity.DefaultRoleClaimType, await _appDbContext.GetRole(userToVerify))
                 };
 
             ClaimsIdentity claimsIdentity =

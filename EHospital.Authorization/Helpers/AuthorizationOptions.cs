@@ -1,7 +1,7 @@
 ﻿namespace EHospital.Authorization.WebAPI
 {
-    using Microsoft.IdentityModel.Tokens;
     using System.Text;
+    using Microsoft.IdentityModel.Tokens;
 
     public class AuthorizationOptions
     {
