@@ -1,9 +1,7 @@
 ﻿namespace EHospital.Authorization.WebAPI
 {
     using System;
-    using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
     using System.Threading.Tasks;
     using EHospital.Authorization.BusinessLogic;
     using EHospital.Authorization.Model;
@@ -19,6 +17,8 @@
                                                           .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IDataProvider _appDbContext;
+
+        AuthorizationManager authorizationManager = new AuthorizationManager();
 
         public AuthorizationController(IDataProvider data)
         {
@@ -37,7 +37,7 @@
             }
 
             Log.Info("Check the user.");
-            var identity = this.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
+            var identity = authorizationManager.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
             if (identity.Result == null)
             {
                 Log.Error("Invalid username or password.");
@@ -46,7 +46,12 @@
             else
             {
                 Log.Info("Set an access token.");
-                var jwt = this.GetToken(credentials.UserLogin, credentials.Password);
+                var jwt = this.GetToken(credentials.UserLogin);
+                if (jwt == null)
+                {
+                    return this.BadRequest("Invalid username or password.");
+                }
+
                 _appDbContext.Token = jwt.Result;
                 Log.Info("Successful authorize.");
                 return new OkObjectResult(jwt.Result);
@@ -60,18 +65,14 @@
             return new OkObjectResult("Log out succes.");
         }
 
-        private async Task<string> GetToken(string username, string password)
+        private async Task<string> GetToken(string username)
         {
-            // var username = Request.Form["username"];
-            // var password = Request.Form["password"];
-
             int userId = await _appDbContext.FindByLogin(username);
 
-            var identity = await this.GetIdentity(username, userId);
+            var identity = await authorizationManager.GetIdentity(username, userId);
             if (identity == null)
             {
-                this.Response.StatusCode = 400;
-                await this.Response.WriteAsync("Invalid username or password.");
+                return null;
             }
 
             Log.Info("Set token options.");
@@ -114,49 +115,6 @@
             this.Response.ContentType = "application/json";
             await this.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             return encodedJwt;
-        }
-
-        private async Task<ClaimsIdentity> GetClaimsIdentity(string userLogin, string password)
-        {
-            if (string.IsNullOrEmpty(userLogin) || string.IsNullOrEmpty(password))
-            {
-                return null;
-            }
-
-            Log.Info("Get the user to verifty.");
-            var userToVerify = await _appDbContext.FindByLogin(userLogin);
-
-            if (userToVerify == 0)
-            {
-                return null;
-            }
-
-            Log.Info("Check the credentials.");
-            if (await _appDbContext.CheckPassword(password, userToVerify))
-            {
-                return await this.GetIdentity(userLogin, userToVerify);
-            }
-
-            Log.Error("Credentials are invalid, or account doesn't exist.");
-            return null;
-        }
-
-        private async Task<ClaimsIdentity> GetIdentity(string userLogin, int userToVerify)
-        {
-            var claims = new List<Claim>
-                {
-                   new Claim(ClaimsIdentity.DefaultNameClaimType, userLogin),
-                   new Claim(ClaimsIdentity.DefaultRoleClaimType, await _appDbContext.GetRole(userToVerify))
-                };
-
-            ClaimsIdentity claimsIdentity =
-            new ClaimsIdentity(
-                claims,
-                "Token",
-                ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);
-
-            return claimsIdentity;
         }
     }
 }

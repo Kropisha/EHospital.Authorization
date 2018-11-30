@@ -15,7 +15,7 @@
             if (string.IsNullOrWhiteSpace(password))
             {
                 return false;
-                // throw new Exception("Password should not be empty");
+                throw new ArgumentException("Password should not be empty");
             }
 
             var hasNumber = new Regex(@"[0-9]+");
@@ -24,46 +24,35 @@
             var hasLowerChar = new Regex(@"[a-z]+");
             var hasSymbols = new Regex(@"[!@#$%^&*()_+=\[{\]};:<>|./?,-]");
 
-            if (!hasLowerChar.IsMatch(password) || !hasUpperChar.IsMatch(password) || !hasMiniMaxChars.IsMatch(password)
-                || !hasNumber.IsMatch(password) || !hasSymbols.IsMatch(password))
+            if (!hasLowerChar.IsMatch(password))
             {
                 return false;
+                throw new ArgumentException("Password should contain at least one lower case letter");
+            }
+            else if (!hasUpperChar.IsMatch(password))
+            {
+                return false;
+                throw new ArgumentException("Password should contain at least one upper case letter");
+            }
+            else if (!hasMiniMaxChars.IsMatch(password))
+            {
+                return false;
+                throw new ArgumentException("Password should not be less than 5 or greater than 50 characters");
+            }
+            else if (!hasNumber.IsMatch(password))
+            {
+                return false;
+                throw new ArgumentException("Password should contain at least one numeric value");
+            }
+            else if (!hasSymbols.IsMatch(password))
+            {
+                return false;
+                throw new ArgumentException("Password should contain at least one special case characters");
             }
             else
             {
                 return true;
             }
-
-          /*  if (!hasLowerChar.IsMatch(input))
-            {
-                ErrorMessage = "Password should contain At least one lower case letter";
-                return false;
-            }
-            else if (!hasUpperChar.IsMatch(input))
-            {
-                ErrorMessage = "Password should contain At least one upper case letter";
-                return false;
-            }
-            else if (!hasMiniMaxChars.IsMatch(input))
-            {
-                ErrorMessage = "Password should not be less than or greater than 12 characters";
-                return false;
-            }
-            else if (!hasNumber.IsMatch(input))
-            {
-                ErrorMessage = "Password should contain At least one numeric value";
-                return false;
-            }
-            else if (!hasSymbols.IsMatch(input))
-            {
-                ErrorMessage = "Password should contain At least one special case characters";
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-            */
         }
 
         public static string HashPassword(string password)

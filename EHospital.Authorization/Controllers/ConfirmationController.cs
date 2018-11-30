@@ -17,8 +17,8 @@
             _appDbContext = data;
         }
 
-        [HttpPut("role")]
-        public ActionResult<Roles> ChangeRole([FromBody]Roles roles)
+        [HttpPut("Role")]
+        public async Task<IActionResult> ChangeRole([FromBody]Roles roles)
         {
             Log.Info("Get new role.");
             if (!this.ModelState.IsValid)
@@ -27,7 +27,7 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            if (_appDbContext.ChangeRole(roles) != null)
+            if (await _appDbContext.ChangeRole(roles) != null)
             {
                 Log.Error("Incorrect role.");
                 return this.BadRequest(Errors.AddErrorToModelState("roles_failure", "Invalid role.", this.ModelState));
@@ -35,13 +35,13 @@
             else
             {
                 Log.Info("Changing role.");
-                _appDbContext.ChangeRole(roles);
+                await _appDbContext.ChangeRole(roles);
                 return this.Ok();
             }
         }
 
-        [HttpPut("user")]
-        public ActionResult<UsersData> ChangeUserData([FromBody]UsersData usersData)
+        [HttpPut("User")]
+        public async Task<IActionResult> ChangeUserData([FromBody]UsersData usersData)
         {
             Log.Info("Get user's data.");
             if (!this.ModelState.IsValid)
@@ -50,7 +50,7 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            if (_appDbContext.ChangeUserData(usersData) != null)
+            if (await _appDbContext.ChangeUserData(usersData) != null)
             {
                 Log.Error("Invalid input, null user.");
                 return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
@@ -58,12 +58,12 @@
             else
             {
                 Log.Info("Change datas.");
-                return this.Ok(_appDbContext.ChangeUserData(usersData));
+                return this.Ok();
             }
         }
 
-        [HttpPut("password")]
-        public ActionResult<Secrets> ChangePassword([FromBody]Secrets secrets)
+        [HttpPut("Password")]
+        public async Task<IActionResult> ChangePassword([FromBody]Secrets secrets)
         {
             Log.Info("Get new password.");
             if (!this.ModelState.IsValid)
@@ -72,15 +72,15 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            if (_appDbContext.ChangePassword(secrets) == null)
+            if (await _appDbContext.ChangePassword(secrets) == null)
             {
                 Log.Error("Invalid input, null password.");
-                return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
+                return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", this.ModelState));
             }
             else
             {
                 Log.Info("Change password.");
-                return this.Ok(_appDbContext.ChangePassword(secrets));
+                return this.Ok();
             }
         }
 

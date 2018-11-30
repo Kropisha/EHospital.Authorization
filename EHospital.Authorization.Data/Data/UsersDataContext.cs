@@ -11,6 +11,10 @@
     {
         public UsersDataContext(DbContextOptions<UsersDataContext> options) : base(options) { }
 
+        public UsersDataContext()
+        {
+        }
+
         public DbSet<UsersData> UsersData { get; set; }
 
         public DbSet<Logins> Logins { get; set; }
