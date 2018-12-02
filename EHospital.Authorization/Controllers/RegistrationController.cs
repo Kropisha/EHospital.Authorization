@@ -2,7 +2,6 @@
 {
     using System;
     using System.Threading.Tasks;
-    using AutoMapper;
     using EHospital.Authorization.Data;
     using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Mvc;
@@ -10,14 +9,14 @@
     [Route("api/[controller]")]
     public class RegistrationController : Controller
     {
-        private static readonly log4net.ILog Log = log4net.LogManager
-                                                          .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILogging Log;
 
         private readonly IDataProvider _appDbContext;
 
-        public RegistrationController(IDataProvider appDbContext)
+        public RegistrationController(IDataProvider appDbContext, ILogging logger)
         {
             _appDbContext = appDbContext;
+            Log = logger;
         }
 
         public static string RolesDefenition(UsersRoles role)
@@ -47,21 +46,21 @@
         [HttpPost]
         public async Task<IActionResult> Registration([FromBody] UsersData userDatas, [FromBody] Secrets userSecrets)
         {
-            Log.Info("Get datas for registration.");
+            Log.LogInfo("Get datas for registration.");
             if (!this.ModelState.IsValid)
             {
-                Log.Error("Incorrect input.");
+                Log.LogError("Incorrect input.");
                 return this.BadRequest(this.ModelState);
             }
 
-            Log.Info("Chek is password safe.");
+            Log.LogInfo("Chek is password safe.");
             try
             {
                 if (PasswordManager.ValidatePassword(userSecrets.Password))
                 {
-                    Log.Info("Safety of password is good.");
+                    Log.LogInfo("Safety of password is good.");
 
-                    Log.Info("Chek is it a new user.");
+                    Log.LogInfo("Chek is it a new user.");
                     if (!await _appDbContext.IsUserExist(userDatas.Email))
                     {
                         using (var context = new UsersDataContext())
@@ -70,13 +69,13 @@
                             {
                                 try
                                 {
-                                    Log.Info("Add default role.");
+                                    Log.LogInfo("Add default role.");
                                     await _appDbContext.AddRoles(new Roles { Id = (int)UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString() });
 
-                                    Log.Info("Add login.");
+                                    Log.LogInfo("Add login.");
                                     await _appDbContext.AddLogin(new Logins { Id = 0, Login = userDatas.Email });
 
-                                    Log.Info("Add user's data");
+                                    Log.LogInfo("Add user's data");
                                     await _appDbContext.AddUserData(new UsersData
                                     {
                                         FirstName = userDatas.FirstName,
@@ -90,17 +89,17 @@
                                         Email = userDatas.Email
                                     });
 
-                                    Log.Info("Add password.");
+                                    Log.LogInfo("Add password.");
                                     await _appDbContext.AddSecrets(new Secrets { Password = userSecrets.Password });
 
-                                    Log.Info("Save changes.");
+                                    Log.LogInfo("Save changes.");
                                     await _appDbContext.Save();
 
                                     transaction.Commit();
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.Error("Account is not created." + ex.Message);
+                                    Log.LogError("Account is not created." + ex.Message);
                                     return new BadRequestObjectResult("Creation of account was failed." + ex.Message);
                                 }
                             }
@@ -108,22 +107,22 @@
                     }
                     else
                     {
-                        Log.Error("Account is not created.");
+                        Log.LogError("Account is not created.");
                         return new BadRequestObjectResult("Creation of account was failed.");
                     }
 
-                    Log.Info("Account created");
+                    Log.LogInfo("Account created");
                     return new OkObjectResult("Account created");
                 }
                 else
                 {
-                    Log.Error("Account is not created.");
+                    Log.LogError("Account is not created.");
                     return new BadRequestObjectResult("Creation of account was failed.");
                 }
             }
             catch (ArgumentException ex)
             {
-                Log.Error("Account is not created." + ex.Message);
+                Log.LogError("Account is not created." + ex.Message);
                 return new BadRequestObjectResult("Creation of account was failed." + ex.Message);
             }
         }

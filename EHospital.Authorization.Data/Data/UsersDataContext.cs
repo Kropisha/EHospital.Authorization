@@ -63,6 +63,7 @@
             if (existed == null)
             {
                 await this.Sessions.AddAsync(sessions);
+                await this.SaveChangesAsync();
             }
         }
 
@@ -127,7 +128,14 @@
         {
             Logins existed = await this.Logins.FirstOrDefaultAsync(x => x.Login == login);
 
-            return existed.Id;
+            if (existed == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return existed.Id;
+            }
         }
 
         public async Task LogOut(int userId)

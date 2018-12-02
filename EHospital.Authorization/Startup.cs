@@ -13,8 +13,7 @@
 
     public class Startup
     {
-        private static readonly log4net.ILog log = log4net.LogManager
-                                                          .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private ILogging log;
 
         private const string CONNECTION_STRING_NAME = "EHospitalDB";
 
@@ -36,6 +35,7 @@
 
             services.AddScoped<IDataProvider, UsersDataContext>();
             services.AddScoped(typeof(UsersDataContext));
+            services.AddScoped<ILogging, CurrentLogger>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    .AddJwtBearer(options =>
@@ -55,8 +55,6 @@
 
             services.AddSingleton<IEmailSender, EmailSender>();
 
-            log.Info("Using authorization service.");
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
@@ -73,8 +71,10 @@
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogging logg)
         {
+            log = logg;
+            log.LogInfo("Using authorization service.");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

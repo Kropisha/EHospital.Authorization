@@ -8,6 +8,16 @@
     {
         private readonly IDataProvider _appDbContext;
 
+        public AuthorizationManager(IDataProvider data)
+        {
+            _appDbContext = data;
+        }
+
+        public AuthorizationManager()
+        {
+
+        }
+
         public async Task<ClaimsIdentity> GetClaimsIdentity(string userLogin, string password)
         {
             if (string.IsNullOrEmpty(userLogin) || string.IsNullOrEmpty(password))

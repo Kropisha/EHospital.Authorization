@@ -4,6 +4,7 @@
     using System.IdentityModel.Tokens.Jwt;
     using System.Threading.Tasks;
     using EHospital.Authorization.BusinessLogic;
+    using EHospital.Authorization.Data;
     using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -13,47 +14,48 @@
     [Route("api/[controller]")]
     public class AuthorizationController : Controller
     {
-        private static readonly log4net.ILog Log = log4net.LogManager
-                                                          .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILogging Log;
 
         private readonly IDataProvider _appDbContext;
 
-        AuthorizationManager authorizationManager = new AuthorizationManager();
-
-        public AuthorizationController(IDataProvider data)
+        public AuthorizationController(IDataProvider data, ILogging logger)
         {
             _appDbContext = data;
+            Log = logger;
         }
+
+        AuthorizationManager authorizationManager;
 
         // POST api/auth/login
         [HttpPost("login")]
         public IActionResult LogIn([FromBody]CredentialsViewModel credentials)
         {
-            Log.Info("Set credentials for authorization.");
+            Log.LogInfo("Set credentials for authorization.");
             if (!this.ModelState.IsValid)
             {
-                Log.Error("Incorrect format of input.");
+                Log.LogError("Incorrect format of input.");
                 return this.BadRequest(this.ModelState);
             }
 
-            Log.Info("Check the user.");
-            var identity = authorizationManager.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
+            authorizationManager = new AuthorizationManager(_appDbContext);
+            Log.LogInfo("Check the user.");
+            var identity = this.authorizationManager.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
             if (identity.Result == null)
             {
-                Log.Error("Invalid username or password.");
+                Log.LogError("Invalid username or password.");
                 return this.BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", this.ModelState));
             }
             else
             {
-                Log.Info("Set an access token.");
+                Log.LogInfo("Set an access token.");
                 var jwt = this.GetToken(credentials.UserLogin);
                 if (jwt == null)
                 {
                     return this.BadRequest("Invalid username or password.");
                 }
 
-                _appDbContext.Token = jwt.Result;
-                Log.Info("Successful authorize.");
+                // _appDbContext.Token = jwt.Result;
+                Log.LogInfo("Successful authorize.");
                 return new OkObjectResult(jwt.Result);
             }
         }
@@ -75,7 +77,7 @@
                 return null;
             }
 
-            Log.Info("Set token options.");
+            Log.LogInfo("Set token options.");
             var now = DateTime.Now;
 
             var jwt = new JwtSecurityToken(
@@ -86,7 +88,7 @@
                     expires: now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME)),
                     signingCredentials: new SigningCredentials(AuthorizationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            Log.Info("Set session options.");
+            Log.LogInfo("Set session options.");
             Sessions start = new Sessions()
             {
                 Token = encodedJwt,
@@ -94,24 +96,24 @@
                 ExpiredDate = now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME))
             };
 
-            Log.Info("Check for previous session.");
+            Log.LogInfo("Check for previous session.");
             if (await _appDbContext.IsExistPreviousSession(userId))
             {
-                Log.Info("The session was founded. I`ll delete it.");
+                Log.LogInfo("The session was founded. I`ll delete it.");
                 await _appDbContext.DeleteSessions(userId);
-                Log.Info("Successfull delete.");
+                Log.LogInfo("Successfull delete.");
             }
 
-            Log.Info("Add session");
+            Log.LogInfo("Add session");
             await _appDbContext.AddSession(start);
-            Log.Info("Session was add.");
+            Log.LogInfo("Session was add.");
             var response = new
             {
                 access_token = encodedJwt,
                 username = identity.Name
             };
 
-            Log.Info("Return session's token");
+            Log.LogInfo("Return session's token");
             this.Response.ContentType = "application/json";
             await this.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             return encodedJwt;
