@@ -3,6 +3,9 @@
     using System;
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// Db users data
+    /// </summary>
     public class UsersData
     {
         [Key]

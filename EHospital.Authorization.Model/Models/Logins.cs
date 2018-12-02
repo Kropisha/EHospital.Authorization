@@ -2,6 +2,9 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// Db logins
+    /// </summary>
     public class Logins
     {
         [Key]

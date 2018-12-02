@@ -318,7 +318,6 @@
     <Compile Include="EmailAction\EmailSender.cs" />
     <Compile Include="EmailAction\EmailSenderExtensions.cs" />
     <Compile Include="EmailAction\IEmailSender.cs" />
-    <Compile Include="Enums\EnumUsersGender.cs" />
     <Compile Include="Enums\EnumUsersRoles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

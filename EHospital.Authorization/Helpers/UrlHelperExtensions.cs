@@ -2,6 +2,9 @@
 {
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// some test for angular
+    /// </summary>
     public static class UrlHelperExtensions
     {
         public static string GetLocalUrl(this IUrlHelper urlHelper, string localUrl)

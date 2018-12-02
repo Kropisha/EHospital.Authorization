@@ -3,6 +3,9 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
+    /// <summary>
+    /// For setting errors
+    /// </summary>
     public static class Errors
     {
         public static ModelStateDictionary AddErrorsToModelState(IdentityResult identityResult, ModelStateDictionary modelState)

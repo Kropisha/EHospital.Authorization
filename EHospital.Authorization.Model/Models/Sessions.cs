@@ -3,6 +3,9 @@
     using System;
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// Db sessions
+    /// </summary>
     public class Sessions
     {
         [Key]

@@ -6,10 +6,26 @@
 
     public class PasswordManager
     {
+        /// <summary>
+        /// size for salt
+        /// </summary>
         private const int SaltByteSize = 24;
+
+        /// <summary>
+        /// size for hash
+        /// </summary>
         private const int HashByteSize = 24;
+
+        /// <summary>
+        /// the number of iterations
+        /// </summary>
         private const int HasingIterationsCount = 10101;
 
+        /// <summary>
+        /// For setting safe password during registration
+        /// </summary>
+        /// <param name="password">users password</param>
+        /// <returns>if password valid</returns>
         public static bool ValidatePassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
@@ -55,6 +71,11 @@
             }
         }
 
+        /// <summary>
+        /// Encoded user's password
+        /// </summary>
+        /// <param name="password">user's password</param>
+        /// <returns>hash password</returns>
         public static string HashPassword(string password)
         {
             byte[] salt;
@@ -76,6 +97,12 @@
             return Convert.ToBase64String(dst);
         }
 
+        /// <summary>
+        /// Check hashed password
+        /// </summary>
+        /// <param name="hashedPassword">password from db</param>
+        /// <param name="password">credential's password</param>
+        /// <returns>if password correct</returns>
         public static bool VerifyHashedPassword(string hashedPassword, string password)
         {
             byte[] _passwordHashBytes;
@@ -114,6 +141,12 @@
 
         }
 
+        /// <summary>
+        /// check hashes on equality
+        /// </summary>
+        /// <param name="firstHash">from db</param>
+        /// <param name="secondHash">from credentional</param>
+        /// <returns>if they equal</returns>
         private static bool AreHashesEqual(byte[] firstHash, byte[] secondHash)
         {
             int _minHashLength = firstHash.Length <= secondHash.Length ? firstHash.Length : secondHash.Length;

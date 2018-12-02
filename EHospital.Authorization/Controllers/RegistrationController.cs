@@ -6,6 +6,9 @@
     using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Controller for registration
+    /// </summary>
     [Route("api/[controller]")]
     public class RegistrationController : Controller
     {
@@ -19,6 +22,11 @@
             Log = logger;
         }
 
+        /// <summary>
+        /// Set roles defenition by id
+        /// </summary>
+        /// <param name="role">role</param>
+        /// <returns>defenition</returns>
         public static string RolesDefenition(UsersRoles role)
         {
             string definition = null;
@@ -43,6 +51,12 @@
             return definition;
         }
 
+        /// <summary>
+        /// Registers new user
+        /// </summary>
+        /// <param name="userDatas">new user</param>
+        /// <param name="userSecrets">new password</param>
+        /// <returns>succes</returns>
         [HttpPost]
         public async Task<IActionResult> Registration([FromBody] UsersData userDatas, [FromBody] Secrets userSecrets)
         {

@@ -11,6 +11,9 @@
     using Microsoft.IdentityModel.Tokens;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// Controller for authorization
+    /// </summary>
     [Route("api/[controller]")]
     public class AuthorizationController : Controller
     {
@@ -18,17 +21,25 @@
 
         private readonly IDataProvider _appDbContext;
 
+        /// <summary>
+        /// an instance of authorization manager
+        /// </summary>
+        private AuthorizationManager authorizationManager;
+
         public AuthorizationController(IDataProvider data, ILogging logger)
         {
             _appDbContext = data;
             Log = logger;
         }
 
-        AuthorizationManager authorizationManager;
-
+        /// <summary>
+        /// Log in to application
+        /// </summary>
+        /// <param name="credentials">user's login and password</param>
+        /// <returns>token</returns>
         // POST api/auth/login
         [HttpPost("login")]
-        public IActionResult LogIn([FromBody]CredentialsViewModel credentials)
+        public ActionResult LogIn([FromBody]CredentialsViewModel credentials)
         {
             Log.LogInfo("Set credentials for authorization.");
             if (!this.ModelState.IsValid)
@@ -54,19 +65,28 @@
                     return this.BadRequest("Invalid username or password.");
                 }
 
-                // _appDbContext.Token = jwt.Result;
                 Log.LogInfo("Successful authorize.");
                 return new OkObjectResult(jwt.Result);
             }
         }
 
+        /// <summary>
+        /// Log out from application
+        /// </summary>
+        /// <param name="userId">user's id</param>
+        /// <returns>Ok</returns>
         [HttpPost("logout")]
-        public IActionResult LogOut(int userId)
+        public async Task<IActionResult> LogOut(int userId)
         {
-            _appDbContext.LogOut(userId);
+            await _appDbContext.LogOut(userId);
             return new OkObjectResult("Log out succes.");
         }
 
+        /// <summary>
+        /// Get new token
+        /// </summary>
+        /// <param name="username">login</param>
+        /// <returns>token</returns>
         private async Task<string> GetToken(string username)
         {
             int userId = await _appDbContext.FindByLogin(username);
@@ -88,6 +108,7 @@
                     expires: now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME)),
                     signingCredentials: new SigningCredentials(AuthorizationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
             Log.LogInfo("Set session options.");
             Sessions start = new Sessions()
             {

@@ -5,6 +5,9 @@
     using EHospital.Authorization.Model;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Controller for confirmation and managing
+    /// </summary>
     [Route("api/[controller]")]
     public class ConfirmationController : Controller
     {
@@ -18,6 +21,11 @@
             Log = logger;
         }
 
+        /// <summary>
+        /// Change role for user
+        /// </summary>
+        /// <param name="roles">new role</param>
+        /// <returns>ok</returns>
         [HttpPut("Role")]
         public async Task<IActionResult> ChangeRole([FromBody]Roles roles)
         {
@@ -41,6 +49,11 @@
             }
         }
 
+        /// <summary>
+        /// Change users data
+        /// </summary>
+        /// <param name="usersData">new data</param>
+        /// <returns>ok</returns>
         [HttpPut("User")]
         public async Task<IActionResult> ChangeUserData([FromBody]UsersData usersData)
         {
@@ -63,6 +76,11 @@
             }
         }
 
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <param name="secrets">new password</param>
+        /// <returns>ok</returns>
         [HttpPut("Password")]
         public async Task<IActionResult> ChangePassword([FromBody]Secrets secrets)
         {
@@ -85,6 +103,11 @@
             }
         }
 
+        /// <summary>
+        /// Delete user
+        /// </summary>
+        /// <param name="userId">user's id</param>
+        /// <returns>ok</returns>
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(int userId)
         {

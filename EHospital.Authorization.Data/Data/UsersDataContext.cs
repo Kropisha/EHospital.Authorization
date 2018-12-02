@@ -7,6 +7,9 @@
     using EHospital.Authorization.WebAPI;
     using Microsoft.EntityFrameworkCore;
 
+    /// <summary>
+    /// For interface implementation
+    /// </summary>
     public class UsersDataContext : DbContext, IDataProvider
     {
         public UsersDataContext(DbContextOptions<UsersDataContext> options) : base(options) { }
@@ -25,8 +28,11 @@
 
         public DbSet<Sessions> Sessions { get; set; }
 
-        public string Token { get; set; }
-
+        /// <summary>
+        /// Add new role
+        /// </summary>
+        /// <param name="roles">user's role</param>
+        /// <returns>ok</returns>
         public async Task AddRoles(Roles roles)
         {
             {
@@ -34,6 +40,11 @@
             }
         }
 
+        /// <summary>
+        /// Add new login
+        /// </summary>
+        /// <param name="login">user's login</param>
+        /// <returns>ok</returns>
         public async Task AddLogin(Logins login)
         {
             Logins existed = this.Logins.FirstOrDefault(x => x.Login == login.Login);
@@ -45,6 +56,11 @@
             }
         }
 
+        /// <summary>
+        /// Add new password
+        /// </summary>
+        /// <param name="secrets">user's password</param>
+        /// <returns>ok</returns>
         public async Task AddSecrets(Secrets secrets)
         {
             Secrets existed = this.Secrets.FirstOrDefault(x => x.Id == secrets.Id);
@@ -57,6 +73,11 @@
             }
         }
 
+        /// <summary>
+        /// Add new session
+        /// </summary>
+        /// <param name="sessions">user's session</param>
+        /// <returns>ok</returns>
         public async Task AddSession(Sessions sessions)
         {
             Sessions existed = this.Sessions.FirstOrDefault(x => x.Token == sessions.Token);
@@ -67,6 +88,11 @@
             }
         }
 
+        /// <summary>
+        /// Add new user's data
+        /// </summary>
+        /// <param name="usersData">user's data</param>
+        /// <returns>ok</returns>
         public async Task AddUserData(UsersData usersData)
         {
             UsersData existed = this.UsersData.FirstOrDefault(x => x.Email == usersData.Email);
@@ -78,6 +104,11 @@
             }
         }
 
+        /// <summary>
+        /// Change role for user
+        /// </summary>
+        /// <param name="roles">new role</param>
+        /// <returns>login with new role</returns>
         public async Task<Logins> ChangeRole(Roles roles)
         {
             Logins existed = this.Logins.FirstOrDefault(x => x.RoleId == roles.Id);
@@ -91,6 +122,11 @@
             return existed;
         }
 
+        /// <summary>
+        /// Change password for user
+        /// </summary>
+        /// <param name="secrets">password</param>
+        /// <returns>new password</returns>
         public async Task<Secrets> ChangePassword(Secrets secrets)
         {
             Secrets existed = this.Secrets.FirstOrDefault(s => s.Id == secrets.Id);
@@ -103,6 +139,11 @@
             return existed;
         }
 
+        /// <summary>
+        /// Change user's data
+        /// </summary>
+        /// <param name="usersData">user's data</param>
+        /// <returns>new user's data</returns>
         public async Task<UsersData> ChangeUserData(UsersData usersData)
         {
             UsersData existed = this.UsersData.FirstOrDefault(x => x.Id == usersData.Id);
@@ -124,6 +165,11 @@
             return existed;
         }
 
+        /// <summary>
+        /// Find user by login
+        /// </summary>
+        /// <param name="login">credentional's login</param>
+        /// <returns>user's id</returns>
         public async Task<int> FindByLogin(string login)
         {
             Logins existed = await this.Logins.FirstOrDefaultAsync(x => x.Login == login);
@@ -138,6 +184,11 @@
             }
         }
 
+        /// <summary>
+        /// Log out from application
+        /// </summary>
+        /// <param name="userId">user's id</param>
+        /// <returns>ok</returns>
         public async Task LogOut(int userId)
         {
             Sessions existed = this.Sessions.LastOrDefault(x => x.UserId == userId);
@@ -148,6 +199,11 @@
             }
         }
 
+        /// <summary>
+        /// Get role by user's id
+        /// </summary>
+        /// <param name="userId">user's id</param>
+        /// <returns>role</returns>
         public async Task<string> GetRole(int userId)
         {
             Roles existed = await this.Roles.FirstOrDefaultAsync(r => r.Id == userId);
@@ -161,6 +217,11 @@
             }
         }
 
+        /// <summary>
+        /// Get user's role by token
+        /// </summary>
+        /// <param name="token">current token</param>
+        /// <returns>role</returns>
         public async Task<string> GetRoleByToken(string token)
         {
             Sessions existed = await this.Sessions.LastOrDefaultAsync(s => s.Token == token);
@@ -182,6 +243,11 @@
             }
         }
 
+        /// <summary>
+        /// Check if exist user with this login
+        /// </summary>
+        /// <param name="email">user's login</param>
+        /// <returns>is exist</returns>
         public async Task<bool> IsUserExist(string email)
         {
             Logins existed = await this.Logins.FirstOrDefaultAsync(e => e.Login == email);
@@ -195,6 +261,11 @@
             }
         }
 
+        /// <summary>
+        /// Check if this user has previous sessions
+        /// </summary>
+        /// <param name="userId">user's id</param>
+        /// <returns>is exist</returns>
         public async Task<bool> IsExistPreviousSession(int userId)
         {
             Sessions existed = await this.Sessions.FirstOrDefaultAsync(x => x.UserId == userId);
@@ -208,6 +279,12 @@
             }
         }
 
+        /// <summary>
+        /// Check user's password
+        /// </summary>
+        /// <param name="password">user's password</param>
+        /// <param name="userId">user's id</param>
+        /// <returns>if password correct</returns>
         public async Task<bool> CheckPassword(string password, int userId)
         {
             Secrets existed = await this.Secrets.FirstOrDefaultAsync(s => s.Id == userId);
@@ -228,6 +305,11 @@
             }
         }
 
+        /// <summary>
+        /// Delete user
+        /// </summary>
+        /// <param name="id">user's id</param>
+        /// <returns>ok</returns>
         public async Task DeleteUser(int id)
         {
             UsersData existed = this.UsersData.FirstOrDefault(x => x.Id == id);
@@ -238,6 +320,11 @@
             }
         }
 
+        /// <summary>
+        /// Delete previous sessions
+        /// </summary>
+        /// <param name="userId">user's id</param>
+        /// <returns>ok</returns>
         public async Task DeleteSessions(int userId)
         {
             Sessions existed = this.Sessions.FirstOrDefault(x => x.UserId == userId);
@@ -248,6 +335,10 @@
             }
         }
 
+        /// <summary>
+        /// For saving changes
+        /// </summary>
+        /// <returns>ok</returns>
         public async Task Save()
         {
             await this.SaveChangesAsync();

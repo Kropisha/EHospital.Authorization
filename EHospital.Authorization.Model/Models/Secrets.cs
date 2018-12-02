@@ -2,6 +2,9 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// Db secrets
+    /// </summary>
     public class Secrets
     {
         [Key]

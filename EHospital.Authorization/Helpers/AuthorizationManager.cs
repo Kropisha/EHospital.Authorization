@@ -4,6 +4,9 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// For some authorization logic
+    /// </summary>
     public sealed class AuthorizationManager
     {
         private readonly IDataProvider _appDbContext;
@@ -13,11 +16,12 @@
             _appDbContext = data;
         }
 
-        public AuthorizationManager()
-        {
-
-        }
-
+        /// <summary>
+        /// Get identity by credentionals
+        /// </summary>
+        /// <param name="userLogin">user's login</param>
+        /// <param name="password">user's password</param>
+        /// <returns>user</returns>
         public async Task<ClaimsIdentity> GetClaimsIdentity(string userLogin, string password)
         {
             if (string.IsNullOrEmpty(userLogin) || string.IsNullOrEmpty(password))
@@ -40,6 +44,12 @@
             return null;
         }
 
+        /// <summary>
+        /// Verify user
+        /// </summary>
+        /// <param name="userLogin">user's login</param>
+        /// <param name="userToVerify">user's id</param>
+        /// <returns>identity</returns>
         public async Task<ClaimsIdentity> GetIdentity(string userLogin, int userToVerify)
         {
             var claims = new List<Claim>

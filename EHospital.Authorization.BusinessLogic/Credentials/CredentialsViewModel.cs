@@ -2,6 +2,9 @@
 {
     using FluentValidation.Attributes;
 
+    /// <summary>
+    /// Class for keeping users credentials
+    /// </summary>
     [Validator(typeof(CredentialsViewModelValidator))]
     public class CredentialsViewModel
     {

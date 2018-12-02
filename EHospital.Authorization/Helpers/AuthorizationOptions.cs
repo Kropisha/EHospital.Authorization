@@ -3,6 +3,9 @@
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
 
+    /// <summary>
+    /// For setting information regards to token
+    /// </summary>
     public class AuthorizationOptions
     {
         public const string ISSUER = "EHospital.AuthorizationServer";
@@ -10,6 +13,10 @@
         public const int LIFETIME = 30;
         const string KEY = "bhiyrbgi893nixmbh47yhfbuj";
 
+        /// <summary>
+        /// Encrypt token's key
+        /// </summary>
+        /// <returns>secret key</returns>
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));
