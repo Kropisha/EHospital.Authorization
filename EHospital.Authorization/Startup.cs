@@ -37,6 +37,15 @@
             services.AddScoped(typeof(UsersDataContext));
             services.AddScoped<ILogging, CurrentLogger>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    .AddJwtBearer(options =>
                    {
@@ -89,7 +98,9 @@
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            app.UseCors("CorsPolicy");
             app.UseMvc();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

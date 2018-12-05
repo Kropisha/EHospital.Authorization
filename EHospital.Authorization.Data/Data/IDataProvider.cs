@@ -2,9 +2,20 @@
 {
     using System.Threading.Tasks;
     using EHospital.Authorization.Model;
+    using Microsoft.EntityFrameworkCore;
 
     public interface IDataProvider
     {
+         DbSet<UsersData> UsersData { get; set; }
+
+         DbSet<Logins> Logins { get; set; }
+
+         DbSet<Roles> Roles { get; set; }
+
+         DbSet<Secrets> Secrets { get; set; }
+
+         DbSet<Sessions> Sessions { get; set; }
+
         /// <summary>
         /// Add new login
         /// </summary>
