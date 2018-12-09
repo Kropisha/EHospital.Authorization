@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.BusinessLogic
-{
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
+namespace EHospital.Authorization.BusinessLogic.EmailAction
+{
     /// <summary>
     /// Class for verify by email
     /// </summary>

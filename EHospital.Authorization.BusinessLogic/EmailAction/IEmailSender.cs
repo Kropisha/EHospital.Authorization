@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.BusinessLogic
-{
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
+namespace EHospital.Authorization.BusinessLogic.EmailAction
+{
     /// <summary>
     /// An interface for sending emails
     /// </summary>

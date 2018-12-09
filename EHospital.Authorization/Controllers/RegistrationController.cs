@@ -1,33 +1,35 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using System;
-    using System.Threading.Tasks;
-    using EHospital.Authorization.Data;
-    using EHospital.Authorization.Model;
-    using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using EHospital.Authorization.BusinessLogic.Credentials;
+using EHospital.Authorization.BusinessLogic.Enums;
+using EHospital.Authorization.Data.Data;
+using EHospital.Authorization.Model.Models;
+using Microsoft.AspNetCore.Mvc;
 
+namespace EHospital.Authorization.WebAPI.Controllers
+{
     /// <summary>
     /// Controller for registration
     /// </summary>
     [Route("api/[controller]")]
     public class RegistrationController : Controller
     {
-        private readonly ILogging Log;
+        private readonly ILogging _log;
 
         private readonly IDataProvider _appDbContext;
 
         public RegistrationController(IDataProvider appDbContext, ILogging logger)
         {
             _appDbContext = appDbContext;
-            Log = logger;
+            _log = logger;
         }
 
         /// <summary>
-        /// Set roles defenition by id
+        /// Set roles definition by id
         /// </summary>
         /// <param name="role">role</param>
-        /// <returns>defenition</returns>
-        public static string RolesDefenition(UsersRoles role)
+        /// <returns>definition</returns>
+        public static string RolesDefinition(UsersRoles role)
         {
             string definition = null;
             switch (role)
@@ -44,8 +46,6 @@
                 case UsersRoles.Nurse:
                     definition = "Nurse";
                     break;
-                default:
-                    break;
             }
 
             return definition;
@@ -54,28 +54,28 @@
         /// <summary>
         /// Registers new user
         /// </summary>
-        /// <param name="userDatas">new user</param>
+        /// <param name="userData">new user</param>
         /// <param name="userSecrets">new password</param>
-        /// <returns>succes</returns>
+        /// <returns>success</returns>
         [HttpPost]
-        public async Task<IActionResult> Registration([FromBody] UsersData userDatas, [FromBody] Secrets userSecrets)
+        public async Task<IActionResult> Registration([FromBody] UsersData userData, [FromBody] Secrets userSecrets)
         {
-            Log.LogInfo("Get datas for registration.");
-            if (!this.ModelState.IsValid)
+            _log.LogInfo("Get data for registration.");
+            if (!ModelState.IsValid)
             {
-                Log.LogError("Incorrect input.");
-                return this.BadRequest(this.ModelState);
+                _log.LogError("Incorrect input.");
+                return BadRequest(ModelState);
             }
 
-            Log.LogInfo("Chek is password safe.");
+            _log.LogInfo("Check is password safe.");
             try
             {
                 if (PasswordManager.ValidatePassword(userSecrets.Password))
                 {
-                    Log.LogInfo("Safety of password is good.");
+                    _log.LogInfo("Safety of password is good.");
 
-                    Log.LogInfo("Chek is it a new user.");
-                    if (!await _appDbContext.IsUserExist(userDatas.Email))
+                    _log.LogInfo("Check is it a new user.");
+                    if (!await _appDbContext.IsUserExist(userData.Email))
                     {
                         using (var context = new UsersDataContext())
                         {
@@ -83,37 +83,37 @@
                             {
                                 try
                                 {
-                                    Log.LogInfo("Add default role.");
+                                    _log.LogInfo("Add default role.");
                                     await _appDbContext.AddRoles(new Roles { Id = (int)UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString() });
 
-                                    Log.LogInfo("Add login.");
-                                    await _appDbContext.AddLogin(new Logins { Id = 0, Login = userDatas.Email });
+                                    _log.LogInfo("Add login.");
+                                    await _appDbContext.AddLogin(new Logins { Id = 0, Login = userData.Email });
 
-                                    Log.LogInfo("Add user's data");
+                                    _log.LogInfo("Add user's data");
                                     await _appDbContext.AddUserData(new UsersData
                                     {
-                                        FirstName = userDatas.FirstName,
-                                        LastName = userDatas.LastName,
-                                        BirthDate = userDatas.BirthDate,
-                                        PhoneNumber = userDatas.PhoneNumber,
-                                        Country = userDatas.Country,
-                                        City = userDatas.City,
-                                        Adress = userDatas.Adress,
-                                        Gender = userDatas.Gender,
-                                        Email = userDatas.Email
+                                        FirstName = userData.FirstName,
+                                        LastName = userData.LastName,
+                                        BirthDate = userData.BirthDate,
+                                        PhoneNumber = userData.PhoneNumber,
+                                        Country = userData.Country,
+                                        City = userData.City,
+                                        Adress = userData.Adress,
+                                        Gender = userData.Gender,
+                                        Email = userData.Email
                                     });
 
-                                    Log.LogInfo("Add password.");
+                                    _log.LogInfo("Add password.");
                                     await _appDbContext.AddSecrets(new Secrets { Password = userSecrets.Password });
 
-                                    Log.LogInfo("Save changes.");
+                                    _log.LogInfo("Save changes.");
                                     await _appDbContext.Save();
 
                                     transaction.Commit();
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.LogError("Account is not created." + ex.Message);
+                                    _log.LogError("Account is not created." + ex.Message);
                                     return new BadRequestObjectResult("Creation of account was failed." + ex.Message);
                                 }
                             }
@@ -121,22 +121,22 @@
                     }
                     else
                     {
-                        Log.LogError("Account is not created.");
+                        _log.LogError("Account is not created.");
                         return new BadRequestObjectResult("Creation of account was failed.");
                     }
 
-                    Log.LogInfo("Account created");
+                    _log.LogInfo("Account created");
                     return new OkObjectResult("Account created");
                 }
                 else
                 {
-                    Log.LogError("Account is not created.");
+                    _log.LogError("Account is not created.");
                     return new BadRequestObjectResult("Creation of account was failed.");
                 }
             }
             catch (ArgumentException ex)
             {
-                Log.LogError("Account is not created." + ex.Message);
+                _log.LogError("Account is not created." + ex.Message);
                 return new BadRequestObjectResult("Creation of account was failed." + ex.Message);
             }
         }

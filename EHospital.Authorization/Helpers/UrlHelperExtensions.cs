@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
+namespace EHospital.Authorization.WebAPI.Helpers
+{
     /// <summary>
     /// some test for angular
     /// </summary>

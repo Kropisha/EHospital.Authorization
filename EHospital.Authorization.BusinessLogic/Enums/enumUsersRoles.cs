@@ -1,4 +1,4 @@
-﻿namespace EHospital.Authorization
+﻿namespace EHospital.Authorization.BusinessLogic.Enums
 {
     /// <summary>
     /// for setting role

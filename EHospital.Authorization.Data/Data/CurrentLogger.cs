@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.Data
-{
-    using System;
+﻿using System;
 
+namespace EHospital.Authorization.Data.Data
+{
     /// <summary>
     /// Set current logger for application
     /// </summary>
@@ -10,7 +10,7 @@
         /// <summary>
         /// type of logger
         /// </summary>
-        public static readonly log4net.ILog log = log4net.LogManager
+        private static readonly log4net.ILog Log = log4net.LogManager
                                                          .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
@@ -19,7 +19,7 @@
         /// <param name="message">some text for log file</param>
         public void LogInfo(string message)
         {
-            log.Info(message);
+            Log.Info(message);
         }
 
         /// <summary>
@@ -28,7 +28,7 @@
         /// <param name="message">some text for log file</param>
         public void LogWarn(string message)
         {
-            log.Warn(message);
+            Log.Warn(message);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@
         /// <param name="ex">type of exception</param>
         public void LogWarn(string message, Exception ex)
         {
-            log.Warn(message, ex);
+            Log.Warn(message, ex);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@
         /// <param name="message">some text for log file</param>
         public void LogError(string message)
         {
-            log.Error(message);
+            Log.Error(message);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@
         /// <param name="ex">type of exception</param>
         public void LogError(string message, Exception ex)
         {
-            log.Error(message, ex);
+            Log.Error(message, ex);
         }
     }
 }

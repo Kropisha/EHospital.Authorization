@@ -1,9 +1,9 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using System;
-    using System.Security.Cryptography;
-    using System.Text.RegularExpressions;
+﻿using System;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
+namespace EHospital.Authorization.BusinessLogic.Credentials
+{
     public class PasswordManager
     {
         /// <summary>
@@ -19,7 +19,7 @@
         /// <summary>
         /// the number of iterations
         /// </summary>
-        private const int HasingIterationsCount = 10101;
+        private const int HashingIterationsCount = 10101;
 
         /// <summary>
         /// For setting safe password during registration
@@ -30,7 +30,6 @@
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                return false;
                 throw new ArgumentException("Password should not be empty");
             }
 
@@ -42,27 +41,22 @@
 
             if (!hasLowerChar.IsMatch(password))
             {
-                return false;
                 throw new ArgumentException("Password should contain at least one lower case letter");
             }
             else if (!hasUpperChar.IsMatch(password))
             {
-                return false;
                 throw new ArgumentException("Password should contain at least one upper case letter");
             }
             else if (!hasMiniMaxChars.IsMatch(password))
             {
-                return false;
                 throw new ArgumentException("Password should not be less than 5 or greater than 50 characters");
             }
             else if (!hasNumber.IsMatch(password))
             {
-                return false;
                 throw new ArgumentException("Password should contain at least one numeric value");
             }
             else if (!hasSymbols.IsMatch(password))
             {
-                return false;
                 throw new ArgumentException("Password should contain at least one special case characters");
             }
             else
@@ -82,10 +76,10 @@
             byte[] buffer2;
             if (password == null)
             {
-                throw new ArgumentNullException("password");
+                throw new ArgumentNullException("Incorrect password");
             }
 
-            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, SaltByteSize, HasingIterationsCount))
+            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, SaltByteSize, HashingIterationsCount))
             {
                 salt = bytes.Salt;
                 buffer2 = bytes.GetBytes(HashByteSize);
@@ -105,7 +99,7 @@
         /// <returns>if password correct</returns>
         public static bool VerifyHashedPassword(string hashedPassword, string password)
         {
-            byte[] _passwordHashBytes;
+            byte[] passwordHashBytes;
 
             int _arrayLen = (SaltByteSize + HashByteSize) + 1;
 
@@ -116,7 +110,7 @@
 
             if (password == null)
             {
-                throw new ArgumentNullException("password");
+                throw new ArgumentNullException("Incorrect password");
             }
 
             byte[] src = Convert.FromBase64String(hashedPassword);
@@ -126,18 +120,18 @@
                 return false;
             }
 
-            byte[] _currentSaltBytes = new byte[SaltByteSize];
-            Buffer.BlockCopy(src, 1, _currentSaltBytes, 0, SaltByteSize);
+            byte[] currentSaltBytes = new byte[SaltByteSize];
+            Buffer.BlockCopy(src, 1, currentSaltBytes, 0, SaltByteSize);
 
-            byte[] _currentHashBytes = new byte[HashByteSize];
-            Buffer.BlockCopy(src, SaltByteSize + 1, _currentHashBytes, 0, HashByteSize);
+            byte[] currentHashBytes = new byte[HashByteSize];
+            Buffer.BlockCopy(src, SaltByteSize + 1, currentHashBytes, 0, HashByteSize);
 
-            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, _currentSaltBytes, HasingIterationsCount))
+            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, currentSaltBytes, HashingIterationsCount))
             {
-                _passwordHashBytes = bytes.GetBytes(SaltByteSize);
+                passwordHashBytes = bytes.GetBytes(SaltByteSize);
             }
 
-            return AreHashesEqual(_currentHashBytes, _passwordHashBytes);
+            return AreHashesEqual(currentHashBytes, passwordHashBytes);
 
         }
 
@@ -145,13 +139,13 @@
         /// check hashes on equality
         /// </summary>
         /// <param name="firstHash">from db</param>
-        /// <param name="secondHash">from credentional</param>
+        /// <param name="secondHash">from credential</param>
         /// <returns>if they equal</returns>
         private static bool AreHashesEqual(byte[] firstHash, byte[] secondHash)
         {
-            int _minHashLength = firstHash.Length <= secondHash.Length ? firstHash.Length : secondHash.Length;
+            int minHashLength = firstHash.Length <= secondHash.Length ? firstHash.Length : secondHash.Length;
             var xor = firstHash.Length ^ secondHash.Length;
-            for (int i = 0; i < _minHashLength; i++)
+            for (int i = 0; i < minHashLength; i++)
             {
                 xor |= firstHash[i] ^ secondHash[i];
             }

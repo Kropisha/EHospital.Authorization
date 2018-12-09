@@ -1,9 +1,9 @@
-﻿namespace EHospital.Authorization
-{
-    using System.Threading.Tasks;
-    using EHospital.Authorization.Model;
-    using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using EHospital.Authorization.Model.Models;
+using Microsoft.EntityFrameworkCore;
 
+namespace EHospital.Authorization.Data.Data
+{
     public interface IDataProvider
     {
          DbSet<UsersData> UsersData { get; set; }
@@ -83,7 +83,7 @@
         /// <summary>
         /// Find user by login
         /// </summary>
-        /// <param name="login">credentional's login</param>
+        /// <param name="login">credential's login</param>
         /// <returns>user's id</returns>
         Task<int> FindByLogin(string login);
 

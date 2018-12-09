@@ -1,35 +1,36 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using System;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Threading.Tasks;
-    using EHospital.Authorization.BusinessLogic;
-    using EHospital.Authorization.Data;
-    using EHospital.Authorization.Model;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.IdentityModel.Tokens;
-    using Newtonsoft.Json;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
+using EHospital.Authorization.BusinessLogic.Credentials;
+using EHospital.Authorization.Data.Data;
+using EHospital.Authorization.Model.Models;
+using EHospital.Authorization.WebAPI.Helpers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
+namespace EHospital.Authorization.WebAPI.Controllers
+{
     /// <summary>
     /// Controller for authorization
     /// </summary>
     [Route("api/[controller]")]
     public class AuthorizationController : Controller
     {
-        private readonly ILogging Log;
+        private readonly ILogging _log;
 
         private readonly IDataProvider _appDbContext;
 
         /// <summary>
         /// an instance of authorization manager
         /// </summary>
-        private AuthorizationManager authorizationManager;
+        private AuthorizationManager _authorizationManager;
 
         public AuthorizationController(IDataProvider data, ILogging logger)
         {
             _appDbContext = data;
-            Log = logger;
+            _log = logger;
         }
 
         /// <summary>
@@ -41,31 +42,28 @@
         [HttpPost("login")]
         public ActionResult LogIn([FromBody]CredentialsViewModel credentials)
         {
-            Log.LogInfo("Set credentials for authorization.");
-            if (!this.ModelState.IsValid)
+            _log.LogInfo("Set credentials for authorization.");
+            if (!ModelState.IsValid)
             {
-                Log.LogError("Incorrect format of input.");
-                return this.BadRequest(this.ModelState);
+                _log.LogError("Incorrect format of input.");
+                return BadRequest(ModelState);
             }
 
-            authorizationManager = new AuthorizationManager(_appDbContext);
-            Log.LogInfo("Check the user.");
-            var identity = this.authorizationManager.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
+            _authorizationManager = new AuthorizationManager(_appDbContext);
+            _log.LogInfo("Check the user.");
+            Task<System.Security.Claims.ClaimsIdentity> identity =
+                _authorizationManager.GetClaimsIdentity(credentials.UserLogin, credentials.Password);
             if (identity.Result == null)
             {
-                Log.LogError("Invalid username or password.");
-                return this.BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", this.ModelState));
+                _log.LogError("Invalid username or password.");
+                return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
             }
             else
             {
-                Log.LogInfo("Set an access token.");
-                var jwt = this.GetToken(credentials.UserLogin);
-                if (jwt == null)
-                {
-                    return this.BadRequest("Invalid username or password.");
-                }
+                _log.LogInfo("Set an access token.");
+                var jwt = GetToken(credentials.UserLogin);
 
-                Log.LogInfo("Successful authorize.");
+                _log.LogInfo("Successful authorize.");
                 return new OkObjectResult(jwt.Result);
             }
         }
@@ -79,7 +77,7 @@
         public async Task<IActionResult> LogOut(int userId)
         {
             await _appDbContext.LogOut(userId);
-            return new OkObjectResult("Log out succes.");
+            return new OkObjectResult("Log out success.");
         }
 
         /// <summary>
@@ -91,52 +89,52 @@
         {
             int userId = await _appDbContext.FindByLogin(username);
 
-            var identity = await authorizationManager.GetIdentity(username, userId);
+            var identity = await _authorizationManager.GetIdentity(username, userId);
             if (identity == null)
             {
                 return null;
             }
 
-            Log.LogInfo("Set token options.");
+            _log.LogInfo("Set token options.");
             var now = DateTime.Now;
 
             var jwt = new JwtSecurityToken(
-                    issuer: AuthorizationOptions.ISSUER,
-                    audience: AuthorizationOptions.AUDIENCE,
+                    issuer: AuthorizationOptions.Issuer,
+                    audience: AuthorizationOptions.Audience,
                     notBefore: now,
                     claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME)),
+                    expires: now.Add(TimeSpan.FromMinutes(AuthorizationOptions.Lifetime)),
                     signingCredentials: new SigningCredentials(AuthorizationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            Log.LogInfo("Set session options.");
+            _log.LogInfo("Set session options.");
             Sessions start = new Sessions()
             {
                 Token = encodedJwt,
                 UserId = userId,
-                ExpiredDate = now.Add(TimeSpan.FromMinutes(AuthorizationOptions.LIFETIME))
+                ExpiredDate = now.Add(TimeSpan.FromMinutes(AuthorizationOptions.Lifetime))
             };
 
-            Log.LogInfo("Check for previous session.");
+            _log.LogInfo("Check for previous session.");
             if (await _appDbContext.IsExistPreviousSession(userId))
             {
-                Log.LogInfo("The session was founded. I`ll delete it.");
+                _log.LogInfo("The session was founded. I`ll delete it.");
                 await _appDbContext.DeleteSessions(userId);
-                Log.LogInfo("Successfull delete.");
+                _log.LogInfo("Success delete.");
             }
 
-            Log.LogInfo("Add session");
+            _log.LogInfo("Add session");
             await _appDbContext.AddSession(start);
-            Log.LogInfo("Session was add.");
+            _log.LogInfo("Session was add.");
             var response = new
             {
                 access_token = encodedJwt,
                 username = identity.Name
             };
 
-            Log.LogInfo("Return session's token");
-            this.Response.ContentType = "application/json";
-            await this.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            _log.LogInfo("Return session's token");
+            Response.ContentType = "application/json";
+            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             return encodedJwt;
         }
     }

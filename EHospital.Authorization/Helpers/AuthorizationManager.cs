@@ -1,9 +1,10 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using System.Collections.Generic;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using EHospital.Authorization.Data.Data;
 
+namespace EHospital.Authorization.WebAPI.Helpers
+{
     /// <summary>
     /// For some authorization logic
     /// </summary>
@@ -17,7 +18,7 @@
         }
 
         /// <summary>
-        /// Get identity by credentionals
+        /// Get identity by credentials
         /// </summary>
         /// <param name="userLogin">user's login</param>
         /// <param name="password">user's password</param>
@@ -38,7 +39,7 @@
 
             if (await _appDbContext.CheckPassword(password, userToVerify))
             {
-                return await this.GetIdentity(userLogin, userToVerify);
+                return await GetIdentity(userLogin, userToVerify);
             }
 
             return null;

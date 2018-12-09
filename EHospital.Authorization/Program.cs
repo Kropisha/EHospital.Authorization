@@ -1,12 +1,12 @@
-﻿namespace EHospital.Authorization
-{
-    using System.IO;
-    using System.Reflection;
-    using log4net;
-    using log4net.Config;
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
+﻿using System.IO;
+using System.Reflection;
+using log4net;
+using log4net.Config;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
+namespace EHospital.Authorization.WebAPI
+{
     public class Program
     {
         public static void Main(string[] args)
@@ -16,7 +16,7 @@
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
     }

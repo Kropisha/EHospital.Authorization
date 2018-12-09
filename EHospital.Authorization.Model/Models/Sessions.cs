@@ -1,8 +1,8 @@
-﻿namespace EHospital.Authorization.Model
-{
-    using System;
-    using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
+namespace EHospital.Authorization.Model.Models
+{
     /// <summary>
     /// Db sessions
     /// </summary>

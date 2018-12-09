@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.Data
-{
-    using System;
+﻿using System;
 
+namespace EHospital.Authorization.Data.Data
+{
     /// <summary>
     /// An interface for logging
     /// </summary>

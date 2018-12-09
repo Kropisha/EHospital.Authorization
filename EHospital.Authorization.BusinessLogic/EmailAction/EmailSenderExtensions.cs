@@ -1,8 +1,8 @@
-﻿namespace EHospital.Authorization.BusinessLogic
-{
-    using System.Text.Encodings.Web;
-    using System.Threading.Tasks;
+﻿using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
+namespace EHospital.Authorization.BusinessLogic.EmailAction
+{
     /// <summary>
     /// For main letters
     /// </summary>
@@ -24,11 +24,11 @@
         }
 
         /// <summary>
-        /// Send resset password link
+        /// Send reset password link
         /// </summary>
         /// <param name="emailSender">an instance for interface</param>
         /// <param name="email">user's email</param>
-        /// <param name="callbackUrl">reseting link</param>
+        /// <param name="callbackUrl">resetting link</param>
         /// <returns>completed task</returns>
         public static Task SendResetPasswordAsync(this IEmailSender emailSender, string email, string callbackUrl)
         {

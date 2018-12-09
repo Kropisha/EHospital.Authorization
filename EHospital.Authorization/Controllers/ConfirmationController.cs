@@ -1,24 +1,25 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using System.Threading.Tasks;
-    using EHospital.Authorization.Data;
-    using EHospital.Authorization.Model;
-    using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using EHospital.Authorization.Data.Data;
+using EHospital.Authorization.Model.Models;
+using EHospital.Authorization.WebAPI.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
+namespace EHospital.Authorization.WebAPI.Controllers
+{
     /// <summary>
     /// Controller for confirmation and managing
     /// </summary>
     [Route("api/[controller]")]
     public class ConfirmationController : Controller
     {
-        private readonly ILogging Log;
+        private readonly ILogging _log;
 
         private readonly IDataProvider _appDbContext;
 
         public ConfirmationController(IDataProvider data, ILogging logger)
         {
             _appDbContext = data;
-            Log = logger;
+            _log = logger;
         }
 
         /// <summary>
@@ -29,23 +30,23 @@
         [HttpPut("Role")]
         public async Task<IActionResult> ChangeRole([FromBody]Roles roles)
         {
-            Log.LogInfo("Get new role.");
-            if (!this.ModelState.IsValid)
+            _log.LogInfo("Get new role.");
+            if (!ModelState.IsValid)
             {
-                Log.LogError("Incorrect input.");
-                return this.BadRequest(this.ModelState);
+                _log.LogError("Incorrect input.");
+                return BadRequest(ModelState);
             }
 
             if (await _appDbContext.ChangeRole(roles) != null)
             {
-                Log.LogError("Incorrect role.");
-                return this.BadRequest(Errors.AddErrorToModelState("roles_failure", "Invalid role.", this.ModelState));
+                _log.LogError("Incorrect role.");
+                return BadRequest(Errors.AddErrorToModelState("roles_failure", "Invalid role.", ModelState));
             }
             else
             {
-                Log.LogInfo("Changing role.");
+                _log.LogInfo("Changing role.");
                 await _appDbContext.ChangeRole(roles);
-                return this.Ok();
+                return Ok();
             }
         }
 
@@ -57,22 +58,22 @@
         [HttpPut("User")]
         public async Task<IActionResult> ChangeUserData([FromBody]UsersData usersData)
         {
-            Log.LogInfo("Get user's data.");
-            if (!this.ModelState.IsValid)
+            _log.LogInfo("Get user's data.");
+            if (!ModelState.IsValid)
             {
-                Log.LogError("Incorrect input.");
-                return this.BadRequest(this.ModelState);
+                _log.LogError("Incorrect input.");
+                return BadRequest(ModelState);
             }
 
             if (await _appDbContext.ChangeUserData(usersData) != null)
             {
-                Log.LogError("Invalid input, null user.");
-                return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
+                _log.LogError("Invalid input, null user.");
+                return BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
             }
             else
             {
-                Log.LogInfo("Change datas.");
-                return this.Ok();
+                _log.LogInfo("Change data.");
+                return Ok();
             }
         }
 
@@ -84,22 +85,22 @@
         [HttpPut("Password")]
         public async Task<IActionResult> ChangePassword([FromBody]Secrets secrets)
         {
-            Log.LogInfo("Get new password.");
-            if (!this.ModelState.IsValid)
+            _log.LogInfo("Get new password.");
+            if (!ModelState.IsValid)
             {
-                Log.LogError("Incorrect input.");
-                return this.BadRequest(this.ModelState);
+                _log.LogError("Incorrect input.");
+                return BadRequest(ModelState);
             }
 
             if (await _appDbContext.ChangePassword(secrets) == null)
             {
-                Log.LogError("Invalid input, null password.");
-                return this.BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", this.ModelState));
+                _log.LogError("Invalid input, null password.");
+                return BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
             }
             else
             {
-                Log.LogInfo("Change password.");
-                return this.Ok();
+                _log.LogInfo("Change password.");
+                return Ok();
             }
         }
 
@@ -111,18 +112,18 @@
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            Log.LogInfo("Get user for delete.");
-            if (!this.ModelState.IsValid)
+            _log.LogInfo("Get user for delete.");
+            if (!ModelState.IsValid)
             {
-                Log.LogError("Incorrect input");
-                return this.BadRequest(this.ModelState);
+                _log.LogError("Incorrect input");
+                return BadRequest(ModelState);
             }
             else
             {
-                Log.LogInfo("Deleting user.");
+                _log.LogInfo("Deleting user.");
                 await _appDbContext.DeleteUser(userId);
-                Log.LogInfo("Success.");
-                return this.Ok();
+                _log.LogInfo("Success.");
+                return Ok();
             }
         }
     }

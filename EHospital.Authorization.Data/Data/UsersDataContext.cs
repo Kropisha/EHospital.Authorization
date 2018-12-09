@@ -1,12 +1,12 @@
-﻿namespace EHospital.Authorization.Data
-{
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EHospital.Authorization.Model;
-    using EHospital.Authorization.WebAPI;
-    using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using EHospital.Authorization.BusinessLogic.Credentials;
+using EHospital.Authorization.Model.Models;
+using Microsoft.EntityFrameworkCore;
 
+namespace EHospital.Authorization.Data.Data
+{
     /// <summary>
     /// For interface implementation
     /// </summary>
@@ -36,7 +36,7 @@
         public async Task AddRoles(Roles roles)
         {
             {
-                await this.Roles.AddAsync(roles);
+                await Roles.AddAsync(roles);
             }
         }
 
@@ -47,12 +47,16 @@
         /// <returns>ok</returns>
         public async Task AddLogin(Logins login)
         {
-            Logins existed = this.Logins.FirstOrDefault(x => x.Login == login.Login);
+            Logins existed = Logins.FirstOrDefault(x => x.Login == login.Login);
             if (existed == null)
             {
-                var role = this.Roles.LastOrDefault(x => x.Id > 0);
-                login.RoleId = role.Id;
-                await this.Logins.AddAsync(login);
+                var role = Roles.LastOrDefault(x => x.Id > 0);
+                if (role != null)
+                {
+                    role.Id = login.RoleId;
+                }
+
+                await Logins.AddAsync(login);
             }
         }
 
@@ -63,13 +67,17 @@
         /// <returns>ok</returns>
         public async Task AddSecrets(Secrets secrets)
         {
-            Secrets existed = this.Secrets.FirstOrDefault(x => x.Id == secrets.Id);
+            Secrets existed = Secrets.FirstOrDefault(x => x.Id == secrets.Id);
             if (existed == null)
             {
-                var login = this.Logins.LastOrDefault(x => x.Id > 0);
-                secrets.Id = login.Id;
+                var login = Logins.LastOrDefault(x => x.Id > 0);
+                if (login != null)
+                {
+                    login.Id = secrets.Id;
+                }
+
                 secrets.Password = PasswordManager.HashPassword(secrets.Password);
-                await this.Secrets.AddAsync(secrets);
+                await Secrets.AddAsync(secrets);
             }
         }
 
@@ -80,11 +88,11 @@
         /// <returns>ok</returns>
         public async Task AddSession(Sessions sessions)
         {
-            Sessions existed = this.Sessions.FirstOrDefault(x => x.Token == sessions.Token);
+            Sessions existed = Sessions.FirstOrDefault(x => x.Token == sessions.Token);
             if (existed == null)
             {
-                await this.Sessions.AddAsync(sessions);
-                await this.SaveChangesAsync();
+                await Sessions.AddAsync(sessions);
+                await SaveChangesAsync();
             }
         }
 
@@ -95,12 +103,16 @@
         /// <returns>ok</returns>
         public async Task AddUserData(UsersData usersData)
         {
-            UsersData existed = this.UsersData.FirstOrDefault(x => x.Email == usersData.Email);
+            UsersData existed = UsersData.FirstOrDefault(x => x.Email == usersData.Email);
             if (existed == null)
             {
-                var login = this.Logins.FirstOrDefault(x => x.Login == usersData.Email);
-                usersData.Id = login.Id;
-                await this.UsersData.AddAsync(usersData);
+                var login = Logins.FirstOrDefault(x => x.Login == usersData.Email);
+                if (login != null)
+                {
+                    login.Id = usersData.Id;
+                }
+
+                await UsersData.AddAsync(usersData);
             }
         }
 
@@ -111,12 +123,16 @@
         /// <returns>login with new role</returns>
         public async Task<Logins> ChangeRole(Roles roles)
         {
-            Logins existed = this.Logins.FirstOrDefault(x => x.RoleId == roles.Id);
+            Logins existed = Logins.FirstOrDefault(x => x.RoleId == roles.Id);
             if (existed != null)
             {
-                var current = this.Roles.FirstOrDefault(x => x.Id == existed.RoleId);
-                current.Title = roles.Title;
-                await this.SaveChangesAsync();
+                var current = Roles.FirstOrDefault(x => x.Id == existed.RoleId);
+                if (current != null)
+                {
+                    current.Title = roles.Title;
+                }
+
+                await SaveChangesAsync();
             }
 
             return existed;
@@ -129,11 +145,11 @@
         /// <returns>new password</returns>
         public async Task<Secrets> ChangePassword(Secrets secrets)
         {
-            Secrets existed = this.Secrets.FirstOrDefault(s => s.Id == secrets.Id);
+            Secrets existed = Secrets.FirstOrDefault(s => s.Id == secrets.Id);
             if (existed != null)
             {
                 existed.Password = PasswordManager.HashPassword(secrets.Password);
-                await this.SaveChangesAsync();
+                await SaveChangesAsync();
             }
 
             return existed;
@@ -146,7 +162,7 @@
         /// <returns>new user's data</returns>
         public async Task<UsersData> ChangeUserData(UsersData usersData)
         {
-            UsersData existed = this.UsersData.FirstOrDefault(x => x.Id == usersData.Id);
+            UsersData existed = UsersData.FirstOrDefault(x => x.Id == usersData.Id);
             if (existed != null)
             {
                 existed.FirstName = usersData.FirstName;
@@ -159,7 +175,7 @@
                 existed.Adress = usersData.Adress;
                 existed.Gender = usersData.Gender;
                 existed.Email = usersData.Email;
-                await this.SaveChangesAsync();
+                await SaveChangesAsync();
             }
 
             return existed;
@@ -168,11 +184,11 @@
         /// <summary>
         /// Find user by login
         /// </summary>
-        /// <param name="login">credentional's login</param>
+        /// <param name="login">credential's login</param>
         /// <returns>user's id</returns>
         public async Task<int> FindByLogin(string login)
         {
-            Logins existed = await this.Logins.FirstOrDefaultAsync(x => x.Login == login);
+            Logins existed = await Logins.FirstOrDefaultAsync(x => x.Login == login);
 
             if (existed == null)
             {
@@ -191,11 +207,11 @@
         /// <returns>ok</returns>
         public async Task LogOut(int userId)
         {
-            Sessions existed = this.Sessions.LastOrDefault(x => x.UserId == userId);
+            Sessions existed = Sessions.LastOrDefault(x => x.UserId == userId);
             if (existed != null)
             {
                 existed.ExpiredDate = DateTime.Now;
-                await this.SaveChangesAsync();
+                await SaveChangesAsync();
             }
         }
 
@@ -206,7 +222,7 @@
         /// <returns>role</returns>
         public async Task<string> GetRole(int userId)
         {
-            Roles existed = await this.Roles.FirstOrDefaultAsync(r => r.Id == userId);
+            Roles existed = await Roles.FirstOrDefaultAsync(r => r.Id == userId);
             if (existed != null)
             {
                 return existed.Title;
@@ -224,23 +240,22 @@
         /// <returns>role</returns>
         public async Task<string> GetRoleByToken(string token)
         {
-            Sessions existed = await this.Sessions.LastOrDefaultAsync(s => s.Token == token);
-            if ((existed.ExpiredDate.Hour + existed.ExpiredDate.Minute) < (DateTime.Now.Hour + DateTime.Now.Minute))
+            Sessions existed = await Sessions.LastOrDefaultAsync(s => s.Token == token);
+            if (existed != null)
             {
-                if (existed != null)
+                if ((existed.ExpiredDate.Hour + existed.ExpiredDate.Minute) < (DateTime.Now.Hour + DateTime.Now.Minute))
                 {
-                    var current = this.Roles.FirstOrDefault(r => r.Id == existed.UserId);
-                    return current.Title;
+                    var current = Roles.FirstOrDefault(r => r.Id == existed.UserId);
+                    if (current != null)
+                    {
+                        return current.Title;
+                    }
                 }
-                else
-                {
-                    return "sessionIsEnd";
-                }
-            }
-            else
-            {
+
                 return "sessionIsEnd";
             }
+
+            return "sessionIsEnd";
         }
 
         /// <summary>
@@ -250,7 +265,7 @@
         /// <returns>is exist</returns>
         public async Task<bool> IsUserExist(string email)
         {
-            Logins existed = await this.Logins.FirstOrDefaultAsync(e => e.Login == email);
+            Logins existed = await Logins.FirstOrDefaultAsync(e => e.Login == email);
             if (existed == null)
             {
                 return false;
@@ -268,7 +283,7 @@
         /// <returns>is exist</returns>
         public async Task<bool> IsExistPreviousSession(int userId)
         {
-            Sessions existed = await this.Sessions.FirstOrDefaultAsync(x => x.UserId == userId);
+            Sessions existed = await Sessions.FirstOrDefaultAsync(x => x.UserId == userId);
             if (existed != null)
             {
                 return true;
@@ -287,7 +302,7 @@
         /// <returns>if password correct</returns>
         public async Task<bool> CheckPassword(string password, int userId)
         {
-            Secrets existed = await this.Secrets.FirstOrDefaultAsync(s => s.Id == userId);
+            Secrets existed = await Secrets.FirstOrDefaultAsync(s => s.Id == userId);
             if (existed != null)
             {
                 if (PasswordManager.VerifyHashedPassword(existed.Password, password))
@@ -312,11 +327,11 @@
         /// <returns>ok</returns>
         public async Task DeleteUser(int id)
         {
-            UsersData existed = this.UsersData.FirstOrDefault(x => x.Id == id);
+            UsersData existed = UsersData.FirstOrDefault(x => x.Id == id);
             if (existed != null)
             {
                 existed.IsDeleted = true;
-                await this.SaveChangesAsync();
+                await SaveChangesAsync();
             }
         }
 
@@ -327,11 +342,11 @@
         /// <returns>ok</returns>
         public async Task DeleteSessions(int userId)
         {
-            Sessions existed = this.Sessions.FirstOrDefault(x => x.UserId == userId);
+            Sessions existed = Sessions.FirstOrDefault(x => x.UserId == userId);
             if (existed != null)
             {
-                this.Sessions.Remove(existed);
-                await this.SaveChangesAsync();
+                Sessions.Remove(existed);
+                await SaveChangesAsync();
             }
         }
 
@@ -341,7 +356,7 @@
         /// <returns>ok</returns>
         public async Task Save()
         {
-            await this.SaveChangesAsync();
+            await SaveChangesAsync();
         }
     }
 }

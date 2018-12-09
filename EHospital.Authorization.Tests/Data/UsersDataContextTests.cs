@@ -1,14 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EHospital.Authorization.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using EHospital.Authorization.Model;
+﻿using EHospital.Authorization.Data.Data;
+using EHospital.Authorization.Model.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace EHospital.Authorization.Tests
+namespace EHospital.Authorization.Tests.Data
 {
     [TestClass()]
     public class UsersDataContextTests

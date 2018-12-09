@@ -1,19 +1,20 @@
-﻿namespace EHospital.Authorization.WebAPI
-{
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using EHospital.Authorization.Data.Data;
+using Microsoft.AspNetCore.Mvc;
 
+namespace EHospital.Authorization.WebAPI.Controllers
+{
     /// <summary>
     /// Controller for connection with other services
     /// </summary>
     [Route("api/[controller]")]
-    public class AuthentificationController : Controller
+    public class AuthenticationController : Controller
     {
-        IDataProvider dataProvider;
+        readonly IDataProvider _dataProvider;
 
-        public AuthentificationController(IDataProvider data)
+        public AuthenticationController(IDataProvider data)
         {
-            dataProvider = data;
+            _dataProvider = data;
         }
 
         /// <summary>
@@ -24,7 +25,7 @@
         [HttpGet("Token")]
         public Task<string> GetRoleByToken([FromHeader]string token)
         {
-            return this.dataProvider.GetRoleByToken(token);
+            return _dataProvider.GetRoleByToken(token);
         }
 
        // public string GetToken() => dataProvider.Token;

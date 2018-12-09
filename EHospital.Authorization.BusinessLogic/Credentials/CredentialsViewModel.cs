@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.BusinessLogic
-{
-    using FluentValidation.Attributes;
+﻿using FluentValidation.Attributes;
 
+namespace EHospital.Authorization.BusinessLogic.Credentials
+{
     /// <summary>
     /// Class for keeping users credentials
     /// </summary>

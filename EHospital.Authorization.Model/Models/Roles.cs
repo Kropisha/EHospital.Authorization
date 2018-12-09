@@ -1,7 +1,7 @@
-﻿namespace EHospital.Authorization.Model
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace EHospital.Authorization.Model.Models
+{
     /// <summary>
     /// Db roles
     /// </summary>
