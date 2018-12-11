@@ -19,6 +19,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
     public class AuthorizationController : Controller
     {
         private readonly ILogging _log;
+     Htt
 
         private readonly IDataProvider _appDbContext;
 

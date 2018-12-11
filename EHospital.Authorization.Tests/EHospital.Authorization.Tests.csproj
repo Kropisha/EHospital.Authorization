@@ -203,6 +203,9 @@
     <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
       <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
     </Reference>
+    <Reference Include="NSubstitute, Version=3.1.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSubstitute.3.1.0\lib\net46\NSubstitute.dll</HintPath>
+    </Reference>
     <Reference Include="NuGet.Commands, Version=4.7.0.18070, Culture=neutral, PublicKeyToken=5aaa11a165479571, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.NuGet.Ultimate.4.7.0.20180704\lib\net46\NuGet.Commands.dll</HintPath>
     </Reference>
@@ -309,6 +312,9 @@
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Web.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.System.Windows.Interactivity.3.0.40218.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -342,6 +348,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Controllers\AuthorizationTests.cs" />
+    <Compile Include="Credentials\BusinessLogicTests.cs" />
     <Compile Include="Data\UsersDataContextTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -349,6 +357,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EHospital.Authorization.BusinessLogic\EHospital.Authorization.BusinessLogic.csproj">
+      <Project>{B1B66D99-C450-49B6-AF2C-48C3E37CABC6}</Project>
+      <Name>EHospital.Authorization.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHospital.Authorization.Data\EHospital.Authorization.Data.csproj">
       <Project>{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}</Project>
       <Name>EHospital.Authorization.Data</Name>
@@ -357,14 +369,10 @@
       <Project>{65681762-BD27-4E23-8DA9-2B893D24F30A}</Project>
       <Name>EHospital.Authorization.Model</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Hunspellx64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Hunspellx86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\EHospital.Authorization\EHospital.Authorization.WebAPI.csproj">
+      <Project>{c99d0d27-4387-4039-a1f9-77afb7318b16}</Project>
+      <Name>EHospital.Authorization.WebAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

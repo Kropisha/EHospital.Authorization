@@ -5,7 +5,7 @@ namespace EHospital.Authorization.Model.Models
     /// <summary>
     /// Db logins
     /// </summary>
-    public class Logins
+    public class Logins 
     {
         [Key]
         public int Id { get; set; }
