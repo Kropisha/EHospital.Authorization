@@ -348,9 +348,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Controllers\AuthorizationTests.cs" />
     <Compile Include="Credentials\BusinessLogicTests.cs" />
-    <Compile Include="Data\UsersDataContextTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
