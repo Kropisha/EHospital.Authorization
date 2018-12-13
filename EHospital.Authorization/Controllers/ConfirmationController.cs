@@ -37,10 +37,10 @@ namespace EHospital.Authorization.WebAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await _appDbContext.ChangeRole(roles) != null)
+            if (await _appDbContext.ChangeRole(roles) == null)
             {
                 _log.LogError("Incorrect role.");
-                return BadRequest(Errors.AddErrorToModelState("roles_failure", "Invalid role.", ModelState));
+                return BadRequest(Errors.AddErrorToModelState("rolesFailure", "Invalid role.", ModelState)); 
             }
             else
             {
@@ -65,10 +65,10 @@ namespace EHospital.Authorization.WebAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await _appDbContext.ChangeUserData(usersData) != null)
+            if (await _appDbContext.ChangeUserData(usersData) == null)
             {
                 _log.LogError("Invalid input, null user.");
-                return BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
+                return BadRequest(Errors.AddErrorToModelState("changesFailure", "Invalid input.", ModelState));
             }
             else
             {
@@ -95,7 +95,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
             if (await _appDbContext.ChangePassword(secrets) == null)
             {
                 _log.LogError("Invalid input, null password.");
-                return BadRequest(Errors.AddErrorToModelState("change_failure", "Invalid input.", ModelState));
+                return BadRequest(Errors.AddErrorToModelState("changesFailure", "Invalid input.", ModelState));
             }
             else
             {

@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using EHospital.Authorization.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EHospital.Authorization.Data.Data
 {
-    public interface IDataProvider
+    public interface IDataProvider : IDisposable
     {
          DbSet<UsersData> UsersData { get; set; }
 

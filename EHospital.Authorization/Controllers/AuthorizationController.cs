@@ -19,7 +19,6 @@ namespace EHospital.Authorization.WebAPI.Controllers
     public class AuthorizationController : Controller
     {
         private readonly ILogging _log;
-     Htt
 
         private readonly IDataProvider _appDbContext;
 
@@ -57,7 +56,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
             if (identity.Result == null)
             {
                 _log.LogError("Invalid username or password.");
-                return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
+                return BadRequest(Errors.AddErrorToModelState("loginFailure", "Invalid username or password.", ModelState));
             }
             else
             {

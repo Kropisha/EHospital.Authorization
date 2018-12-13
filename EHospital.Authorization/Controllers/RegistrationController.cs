@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using EHospital.Authorization.BusinessLogic.Credentials;
 using EHospital.Authorization.BusinessLogic.Enums;
@@ -58,7 +59,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
         /// <param name="userSecrets">new password</param>
         /// <returns>success</returns>
         [HttpPost]
-        public async Task<IActionResult> Registration([FromBody] UsersData userData, [FromBody] Secrets userSecrets)
+        public async Task<IActionResult> Registration(UsersData userData, Secrets userSecrets)
         {
             _log.LogInfo("Get data for registration.");
             if (!ModelState.IsValid)
@@ -77,9 +78,10 @@ namespace EHospital.Authorization.WebAPI.Controllers
                     _log.LogInfo("Check is it a new user.");
                     if (!await _appDbContext.IsUserExist(userData.Email))
                     {
-                        using (var context = new UsersDataContext())
+                        using (SqlConnection connection = new SqlConnection("Data Source=JULIKROP;Initial Catalog=Schema;Integrated Security=True"))
                         {
-                            using (var transaction = context.Database.BeginTransaction())
+                            connection.Open();
+                            using (var transaction = connection.BeginTransaction())
                             {
                                 try
                                 {
@@ -87,7 +89,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
                                     await _appDbContext.AddRoles(new Roles { Id = (int)UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString() });
 
                                     _log.LogInfo("Add login.");
-                                    await _appDbContext.AddLogin(new Logins { Id = 0, Login = userData.Email });
+                                    await _appDbContext.AddLogin(new Logins {  Login = userData.Email});
 
                                     _log.LogInfo("Add user's data");
                                     await _appDbContext.AddUserData(new UsersData
@@ -106,19 +108,17 @@ namespace EHospital.Authorization.WebAPI.Controllers
                                     _log.LogInfo("Add password.");
                                     await _appDbContext.AddSecrets(new Secrets { Password = userSecrets.Password });
 
-                                    _log.LogInfo("Save changes.");
-                                    await _appDbContext.Save();
-
                                     transaction.Commit();
+                                    connection.Close();
                                 }
                                 catch (Exception ex)
                                 {
                                     _log.LogError("Account is not created." + ex.Message);
                                     return new BadRequestObjectResult("Creation of account was failed." + ex.Message);
                                 }
-                            }
-                        }
                     }
+                }
+            }
                     else
                     {
                         _log.LogError("Account is not created.");

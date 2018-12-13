@@ -37,6 +37,7 @@ namespace EHospital.Authorization.Data.Data
         {
             {
                 await Roles.AddAsync(roles);
+                await SaveChangesAsync();
             }
         }
 
@@ -53,10 +54,11 @@ namespace EHospital.Authorization.Data.Data
                 var role = Roles.LastOrDefault(x => x.Id > 0);
                 if (role != null)
                 {
-                    role.Id = login.RoleId;
+                    login.RoleId = role.Id;
                 }
 
                 await Logins.AddAsync(login);
+                await SaveChangesAsync();
             }
         }
 
@@ -73,11 +75,12 @@ namespace EHospital.Authorization.Data.Data
                 var login = Logins.LastOrDefault(x => x.Id > 0);
                 if (login != null)
                 {
-                    login.Id = secrets.Id;
+                    secrets.Id = login.Id;
                 }
 
                 secrets.Password = PasswordManager.HashPassword(secrets.Password);
                 await Secrets.AddAsync(secrets);
+                await SaveChangesAsync();
             }
         }
 
@@ -109,10 +112,11 @@ namespace EHospital.Authorization.Data.Data
                 var login = Logins.FirstOrDefault(x => x.Login == usersData.Email);
                 if (login != null)
                 {
-                    login.Id = usersData.Id;
+                    usersData.Id = login.Id;
                 }
 
                 await UsersData.AddAsync(usersData);
+                await SaveChangesAsync();
             }
         }
 
