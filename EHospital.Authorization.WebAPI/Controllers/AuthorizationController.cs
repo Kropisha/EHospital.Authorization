@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Threading.Tasks;
 using EHospital.Authorization.BusinessLogic.Credentials;
 using EHospital.Authorization.Data.Data;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace EHospital.Authorization.WebAPI.Controllers
 {
@@ -40,7 +42,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
         /// <returns>token</returns>
         // POST api/auth/login
         [HttpPost("login")]
-        public ActionResult LogIn([FromBody]CredentialsViewModel credentials)
+        public async Task<IActionResult> LogIn(CredentialsViewModel credentials)
         {
             _log.LogInfo("Set credentials for authorization.");
             if (!ModelState.IsValid)
@@ -58,14 +60,36 @@ namespace EHospital.Authorization.WebAPI.Controllers
                 _log.LogError("Invalid username or password.");
                 return BadRequest(Errors.AddErrorToModelState("loginFailure", "Invalid username or password.", ModelState));
             }
-            else
-            {
+
                 _log.LogInfo("Set an access token.");
-                var jwt = GetToken(credentials.UserLogin);
+                string jwt = await GetToken(credentials.UserLogin);
 
                 _log.LogInfo("Successful authorize.");
-                return new OkObjectResult(jwt.Result);
+               // var hj = Response.WriteAsync(jwt);
+                var response = new
+                {
+                    access_token = jwt,
+                    username = identity.Result.Name
+                };
+            try
+            {
+                //Response.ContentType = "application/json; charset = utf-8";
+                Response.Headers.Add(jwt,"Token");
+                await Response.WriteAsync(JsonConvert.SerializeObject(response,
+                    new JsonSerializerSettings {Formatting = Formatting.Indented}));
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            } 
+
+            //return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            //{
+            //    Content = new StringContent(string.Format(jwt))
+            //};
+            return new OkObjectResult(string.Format("{0}",jwt));
+           // return new CreatedResult("https://localhost:44355/api/Authentication/Token", response);                                                                                                               
+       
         }
 
         /// <summary>
@@ -126,15 +150,15 @@ namespace EHospital.Authorization.WebAPI.Controllers
             _log.LogInfo("Add session");
             await _appDbContext.AddSession(start);
             _log.LogInfo("Session was add.");
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
+            //var response = new
+            //{
+            //    access_token = encodedJwt,
+            //    username = identity.Name
+            //};
 
             _log.LogInfo("Return session's token");
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+           // Response.ContentType = "application/json";
+           // await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             return encodedJwt;
         }
     }
