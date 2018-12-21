@@ -247,7 +247,7 @@ namespace EHospital.Authorization.Data.Data
             Sessions existed = await Sessions.LastOrDefaultAsync(s => s.Token == token);
             if (existed != null)
             {
-                if ((existed.ExpiredDate.Hour + existed.ExpiredDate.Minute) < (DateTime.Now.Hour + DateTime.Now.Minute))
+                if ((existed.ExpiredDate.Hour + existed.ExpiredDate.Minute) > (DateTime.Now.Hour + DateTime.Now.Minute))
                 {
                     var current = Roles.FirstOrDefault(r => r.Id == existed.UserId);
                     if (current != null)

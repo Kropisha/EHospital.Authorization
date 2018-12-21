@@ -26,4 +26,10 @@
     <ProjectReference Include="..\EHospital.Authorization.Model\EHospital.Authorization.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="EHospital.Shared">
+      <HintPath>..\..\EHospital.Shared\EHospital.Shared\EHospital.Shared\bin\Debug\netcoreapp2.1\EHospital.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -23,8 +23,19 @@ namespace EHospital.Authorization.WebAPI.Controllers
         /// <param name="token">token</param>
         /// <returns>role</returns>
         [HttpGet("Token")]
-        public Task<string> GetRoleByToken([FromHeader]string token)
+        public Task<string> GetRoleByToken()
         {
+            var headers = Request.Headers;
+            var token = "";
+            foreach (var head in headers)
+            {
+                if (head.Key == "Authorization")
+                {
+                    token = head.Value;
+                    break;
+                }
+            }
+
             return _dataProvider.GetRoleByToken(token);
         }
 
