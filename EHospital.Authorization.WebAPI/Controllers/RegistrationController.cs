@@ -78,7 +78,8 @@ namespace EHospital.Authorization.WebAPI.Controllers
                     _log.LogInfo("Check is it a new user.");
                     if (!await _appDbContext.IsUserExist(userData.Email))
                     {
-                        using (SqlConnection connection = new SqlConnection("Data Source=JULIKROP;Initial Catalog=Schema;Integrated Security=True"))
+                        using (SqlConnection connection =
+                            new SqlConnection("Data Source=JULIKROP;Initial Catalog=Schema;Integrated Security=True"))
                         {
                             connection.Open();
                             using (var transaction = connection.BeginTransaction())
@@ -86,10 +87,11 @@ namespace EHospital.Authorization.WebAPI.Controllers
                                 try
                                 {
                                     _log.LogInfo("Add default role.");
-                                    await _appDbContext.AddRoles(new Roles { Id = (int)UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString() });
+                                    await _appDbContext.AddRoles(new Roles
+                                        {Id = (int) UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString()});
 
                                     _log.LogInfo("Add login.");
-                                    await _appDbContext.AddLogin(new Logins {  Login = userData.Email});
+                                    await _appDbContext.AddLogin(new Logins {Login = userData.Email});
 
                                     _log.LogInfo("Add user's data");
                                     await _appDbContext.AddUserData(new UsersData
@@ -106,19 +108,23 @@ namespace EHospital.Authorization.WebAPI.Controllers
                                     });
 
                                     _log.LogInfo("Add password.");
-                                    await _appDbContext.AddSecrets(new Secrets { Password = userSecrets.Password });
+                                    await _appDbContext.AddSecrets(new Secrets {Password = userSecrets.Password});
 
                                     transaction.Commit();
-                                    connection.Close();
                                 }
                                 catch (Exception ex)
                                 {
                                     _log.LogError("Account is not created." + ex.Message);
+                                    transaction.Rollback();
                                     return new BadRequestObjectResult("Creation of account was failed." + ex.Message);
                                 }
+                                finally
+                                {
+                                    transaction.Dispose();
+                                }
+                            }
+                        }
                     }
-                }
-            }
                     else
                     {
                         _log.LogError("Account is not created.");
