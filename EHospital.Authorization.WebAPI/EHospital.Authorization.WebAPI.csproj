@@ -10,20 +10,19 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="EHospital.Shared" Version="72.0.0" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EHospital.Authorization.BusinessLogic\EHospital.Authorization.BusinessLogic.csproj" />
     <ProjectReference Include="..\EHospital.Authorization.Data\EHospital.Authorization.Data.csproj" />
-    <ProjectReference Include="..\EHospital.Authorization.Model\EHospital.Authorization.Model.csproj" />
+    <ProjectReference Include="..\EHospital.Authorization.Model\EHospital.Authorization.Models.csproj" />
   </ItemGroup>
-
 </Project>

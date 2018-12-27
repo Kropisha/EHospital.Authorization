@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using EHospital.Authorization.Data.Data;
+using EHospital.Authorization.Data;
 
 namespace EHospital.Authorization.WebAPI.Helpers
 {
@@ -10,11 +10,11 @@ namespace EHospital.Authorization.WebAPI.Helpers
     /// </summary>
     public sealed class AuthorizationManager
     {
-        private readonly IDataProvider _appDbContext;
+        private readonly IUserDataProvider _appDbContext;
 
-        public AuthorizationManager(IDataProvider data)
+        public AuthorizationManager(IUserDataProvider userData)
         {
-            _appDbContext = data;
+            _appDbContext = userData;
         }
 
         /// <summary>

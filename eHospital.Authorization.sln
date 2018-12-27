@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.Model", "EHospital.Authorization.Model\EHospital.Authorization.Model.csproj", "{65681762-BD27-4E23-8DA9-2B893D24F30A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.Models", "EHospital.Authorization.Model\EHospital.Authorization.Models.csproj", "{65681762-BD27-4E23-8DA9-2B893D24F30A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Authorization.Data", "EHospital.Authorization.Data\EHospital.Authorization.Data.csproj", "{939E2C62-6BAC-4310-8AC0-0C7B2BD7AADA}"
 EndProject

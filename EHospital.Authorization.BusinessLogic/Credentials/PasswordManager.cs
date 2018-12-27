@@ -43,26 +43,24 @@ namespace EHospital.Authorization.BusinessLogic.Credentials
             {
                 throw new ArgumentException("Password should contain at least one lower case letter");
             }
-            else if (!hasUpperChar.IsMatch(password))
+
+            if (!hasUpperChar.IsMatch(password))
             {
                 throw new ArgumentException("Password should contain at least one upper case letter");
             }
-            else if (!hasMiniMaxChars.IsMatch(password))
+            if (!hasMiniMaxChars.IsMatch(password))
             {
                 throw new ArgumentException("Password should not be less than 5 or greater than 50 characters");
             }
-            else if (!hasNumber.IsMatch(password))
+            if (!hasNumber.IsMatch(password))
             {
                 throw new ArgumentException("Password should contain at least one numeric value");
             }
-            else if (!hasSymbols.IsMatch(password))
+            if (!hasSymbols.IsMatch(password))
             {
                 throw new ArgumentException("Password should contain at least one special case characters");
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
 
         /// <summary>
@@ -85,7 +83,7 @@ namespace EHospital.Authorization.BusinessLogic.Credentials
                 buffer2 = bytes.GetBytes(HashByteSize);
             }
 
-            byte[] dst = new byte[(SaltByteSize + HashByteSize) + 1];
+            byte[] dst = new byte[SaltByteSize + HashByteSize + 1];
             Buffer.BlockCopy(salt, 0, dst, 1, SaltByteSize);
             Buffer.BlockCopy(buffer2, 0, dst, SaltByteSize + 1, HashByteSize);
             return Convert.ToBase64String(dst);
@@ -101,7 +99,7 @@ namespace EHospital.Authorization.BusinessLogic.Credentials
         {
             byte[] passwordHashBytes;
 
-            int _arrayLen = (SaltByteSize + HashByteSize) + 1;
+            int _arrayLen = SaltByteSize + HashByteSize + 1;
 
             if (hashedPassword == null)
             {
@@ -115,7 +113,7 @@ namespace EHospital.Authorization.BusinessLogic.Credentials
 
             byte[] src = Convert.FromBase64String(hashedPassword);
 
-            if ((src.Length != _arrayLen) || (src[0] != 0))
+            if (src.Length != _arrayLen || src[0] != 0)
             {
                 return false;
             }

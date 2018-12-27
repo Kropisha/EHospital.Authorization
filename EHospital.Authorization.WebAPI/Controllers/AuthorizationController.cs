@@ -2,8 +2,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using EHospital.Authorization.BusinessLogic.Credentials;
-using EHospital.Authorization.Data.Data;
-using EHospital.Authorization.Model.Models;
+using EHospital.Authorization.Data;
+using EHospital.Authorization.Models;
 using EHospital.Authorization.WebAPI.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +20,16 @@ namespace EHospital.Authorization.WebAPI.Controllers
     {
         private readonly ILogging _log;
 
-        private readonly IDataProvider _appDbContext;
+        private readonly IUserDataProvider _appDbContext;
 
         /// <summary>
         /// an instance of authorization manager
         /// </summary>
         private AuthorizationManager _authorizationManager;
 
-        public AuthorizationController(IDataProvider data, ILogging logger)
+        public AuthorizationController(IUserDataProvider userData, ILogging logger)
         {
-            _appDbContext = data;
+            _appDbContext = userData;
             _log = logger;
         }
 
@@ -40,7 +40,7 @@ namespace EHospital.Authorization.WebAPI.Controllers
         /// <returns>token</returns>
         // POST api/auth/login
         [HttpPost("login")]
-        public ActionResult LogIn([FromBody]CredentialsViewModel credentials)
+        public async Task<IActionResult> LogIn(CredentialsViewModel credentials)
         {
             _log.LogInfo("Set credentials for authorization.");
             if (!ModelState.IsValid)
@@ -58,13 +58,29 @@ namespace EHospital.Authorization.WebAPI.Controllers
                 _log.LogError("Invalid username or password.");
                 return BadRequest(Errors.AddErrorToModelState("loginFailure", "Invalid username or password.", ModelState));
             }
-            else
+
+            if (await _appDbContext.IsConfirmed(credentials.UserLogin))
             {
-                _log.LogInfo("Set an access token.");
-                var jwt = GetToken(credentials.UserLogin);
+                string jwt = await _appDbContext.IsAuthorized(credentials.UserLogin);
+                if (jwt == null)
+                {
+                    _log.LogInfo("Set an access token.");
+                    jwt = await GetToken(credentials.UserLogin);
+                }
+                else
+                {
+                    _log.LogInfo("User is already authorized. Get an access token from current session.");
+                }
 
                 _log.LogInfo("Successful authorize.");
-                return new OkObjectResult(jwt.Result);
+
+                var result = new { token = jwt };
+
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest("Please, first confirm you email, then login.");
             }
         }
 
@@ -126,16 +142,9 @@ namespace EHospital.Authorization.WebAPI.Controllers
             _log.LogInfo("Add session");
             await _appDbContext.AddSession(start);
             _log.LogInfo("Session was add.");
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
 
             _log.LogInfo("Return session's token");
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-            return encodedJwt;
+           return encodedJwt;
         }
     }
 }
