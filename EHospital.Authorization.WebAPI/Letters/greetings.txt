@@ -1,0 +1,70 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" style="background-color: rgb(241, 240, 232);" width="100%">
+	<tbody>
+		<tr>
+			<td>
+			<table cellpadding="0" cellspacing="0" width="100%">
+				<tbody>
+					<tr>
+						<td style="text-align: center;" valign="top"><img alt="EHospital" src="https://adroitinfosystems.files.wordpress.com/2016/02/ehospitallogoh.jpg" style="width: 400px; height: 96px;" /></td></td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<table align="center" border="0" cellpadding="0" cellspacing="0" style="background-color: rgb(255, 255, 255);" width="600">
+				<tbody>
+					<tr>
+						<td>
+						<table border="0" cellpadding="0" cellspacing="0" height="400" width="600">
+							<tbody>
+								<tr>
+									<td class="article-title" colspan="2" height="45" style="padding: 0px 20px; font-family: Georgia; font-size: 20px; font-weight: bold;" valign="top" width="600"><br />
+									Successful registration<br />
+									&nbsp;</td>
+								</tr>
+								<tr>
+									<td class="content-copy" colspan="2" style="padding: 0px 20px; font-size: 14px; font-family: Georgia; line-height: 20px;" valign="top">
+									<p><span style="font-size: 16px;"><span style="font-family: arial, helvetica, sans-serif;">Thank you for using our application! You successfully register in our system, so now you should wait for confirming your data by admin.</span></span></p>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 21.50400161743164px;">&nbsp;</div>
+
+									<p style="text-align: center;">&nbsp;</p>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+									<p><span style="font-size:14px;"><span style="font-family: arial, helvetica, sans-serif;"><img alt="" src="https://www.medelita.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/1/_/1.david_v_bernard_lab_coat_0031-featured.jpg" style="width: 100px; height: 100px; float: left; border-width: 0px; border-style: solid; margin: 5px;" />Bernard Gretello, the head of EHospital.</span></span></p>
+									
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</body>
+</html>

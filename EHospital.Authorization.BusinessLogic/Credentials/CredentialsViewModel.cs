@@ -1,5 +1,4 @@
 ﻿using FluentValidation.Attributes;
-using System.ComponentModel.DataAnnotations;
 
 namespace EHospital.Authorization.BusinessLogic.Credentials
 {

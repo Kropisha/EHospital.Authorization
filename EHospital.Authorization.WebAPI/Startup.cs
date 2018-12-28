@@ -1,5 +1,4 @@
-﻿using EHospital.Authorization.BusinessLogic.EmailAction;
-using EHospital.Authorization.Data.Data;
+﻿using EHospital.Authorization.Data;
 using EHospital.Authorization.WebAPI.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -30,11 +29,11 @@ namespace EHospital.Authorization.WebAPI
         {
             string connection = Configuration.GetConnectionString(ConnectionStringName);
 
-            services.AddDbContext<UsersDataContext>(options =>
+            services.AddDbContext<UsersDataProvider>(options =>
                 options.UseSqlServer(connection));
 
-            services.AddScoped<IDataProvider, UsersDataContext>();
-            services.AddScoped(typeof(UsersDataContext));
+            services.AddScoped<IUserDataProvider, UsersDataProvider>();
+            services.AddScoped(typeof(UsersDataProvider));
             services.AddScoped<ILogging, CurrentLogger>();
 
             services.AddCors(options =>
@@ -61,8 +60,6 @@ namespace EHospital.Authorization.WebAPI
                            ValidateIssuerSigningKey = true,
                        };
                    });
-
-            services.AddSingleton<IEmailSender, EmailSender>();
 
             services.AddSwaggerGen(c =>
             {
@@ -104,7 +101,7 @@ namespace EHospital.Authorization.WebAPI
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "EHospital");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "EHospital");
             });
         }
     }
