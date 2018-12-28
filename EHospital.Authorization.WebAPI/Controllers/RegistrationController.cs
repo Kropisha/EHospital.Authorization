@@ -68,7 +68,8 @@ namespace EHospital.Authorization.WebAPI.Controllers
                                         {Id = (int) UsersRoles.NoRole, Title = UsersRoles.NoRole.ToString()});
 
                                     _log.LogInfo("Add login.");
-                                    await _appDbContext.AddLogin(new Logins {Login = userData.Email, RegisterKey = emailSender.GenerateKey(), Status = "New" });
+                                    await _appDbContext.AddLogin(new Logins {Login = userData.Email,
+                                        RegisterKey = emailSender.GenerateKey(), Status = "New" });
 
                                     _log.LogInfo("Add user's userData");
                                     await _appDbContext.AddUserData(new UsersData
